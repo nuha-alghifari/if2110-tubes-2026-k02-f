@@ -1,6 +1,3 @@
-# Contoh Makefile. Silakan sesuaikan dengan struktur program kalian.
-# Semua file .c di src/ dikompilasi; driver memiliki entry point terpisah.
-
 .DEFAULT_GOAL := all
 .DELETE_ON_ERROR:
 
@@ -14,8 +11,9 @@ SOURCES := $(shell find src -type f -name '*.c' | LC_ALL=C sort)
 OBJECTS := $(patsubst src/%.c,build/%.o,$(SOURCES))
 MODULE_OBJECTS := $(filter-out build/main.o,$(OBJECTS))
 DEPENDENCIES := $(OBJECTS:.o=.d)
+DRIVER_SOURCES := $(shell find drivers -type f -name '*.c' 2>/dev/null | LC_ALL=C sort)
 
-.PHONY: all run clean help driver run-driver
+.PHONY: all run clean help driver run-driver test
 
 all: $(TARGET)
 
@@ -30,8 +28,12 @@ build/%.o: src/%.c Makefile
 run: $(TARGET)
 	./$(TARGET)
 
-# Contoh: make run-driver DRIVER=drivers/list_driver.c
-# Hanya src/main.c yang dikecualikan saat membangun driver.
+test:
+	@set -e; for d in $(DRIVER_SOURCES); do \
+		echo "=== $$d ==="; \
+		$(MAKE) --no-print-directory run-driver DRIVER="$$d"; \
+	done
+
 DRIVER ?=
 
 ifeq ($(strip $(DRIVER)),)
@@ -66,10 +68,11 @@ clean:
 
 help:
 	@printf '%s\n' \
-	  'make                                       Kompilasi program' \
-	  'make run                                   Kompilasi dan jalankan program' \
-	  'make driver DRIVER=drivers/list_driver.c    Kompilasi driver yang sudah dibuat' \
+	  'make                                         Kompilasi program' \
+	  'make run                                     Kompilasi dan jalankan program' \
+	  'make driver DRIVER=drivers/list_driver.c     Kompilasi driver yang sudah dibuat' \
 	  'make run-driver DRIVER=drivers/list_driver.c Kompilasi dan jalankan driver' \
-	  'make clean                                 Hapus hasil kompilasi'
+	  'make test                                    Kompilasi dan jalankan semua driver di drivers/' \
+	  'make clean                                   Hapus hasil kompilasi'
 
 -include $(DEPENDENCIES)
