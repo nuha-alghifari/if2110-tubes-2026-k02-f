@@ -32,8 +32,8 @@ void tagAdd()
 
 void tag()
 {
-    AddresslistPage p;
-    AddresslistTag t;
+    AddressMultiListPage p;
+    AddressMultiListTag t;
     int idp,idt;
     StatusInput s1=TanyaID("Masukkan ID halaman:",'P',&idp);
     if((s1==InputOK))
@@ -47,7 +47,7 @@ void tag()
                 t=searchMLTagByID(tagpage,idt);
                 if(t!=NULL)
                 {
-                    if(isAlreadyTagged(idp,idt))
+                    if(isAlreadyTagged(p,t))
                     {
                         printf("Already tagged :(");
                         return;
@@ -176,6 +176,18 @@ void tagpages()
     }
     printf("Invalid tag :(");
 	return;
+}
+
+bool isAlreadyTagged(AddressMultiListPage p, AddressMultiListTag mt)
+{
+    AddresslistTag t=p->child;
+    bool tagged=false;
+    while((t!=NULL) && (!tagged))
+    {
+        if(t->info.id==mt->info.id) tagged=true;
+        else t=t->next;
+    }
+    return tagged;
 }
 
 // bool isTagIdxValid(int id)
