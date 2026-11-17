@@ -1,9 +1,14 @@
-#include <stdio.h>
+#include "inisialisasi.h"
+#include "jurnal.h"
+#include "perintah.h"
 
-int main(void) {
-  puts("Tugas Besar IF2110 AP2 2026/2027");
-  puts("Template berhasil dikompilasi dan dijalankan.");
-  puts("Implementasikan inisialisasi, ADT, dan fitur sesuai spesifikasi.");
+int main(void){
+    Jurnal jurnal;
 
-  return 0;
+    InitJurnal(&jurnal);
+    if (Inisialisasi(&jurnal)){
+        JalankanPerintah(&jurnal);
+    }
+    KosongkanJurnal(&jurnal);
+    return 0;
 }
