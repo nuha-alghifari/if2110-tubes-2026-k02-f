@@ -2,6 +2,7 @@
 #include "perintah.h"
 #include "handler.h"
 #include "input.h"
+#include "save_load_cmd.h"
 
 typedef struct {
     const char *nama;
@@ -13,6 +14,8 @@ static const Perintah daftar[] = {
     {"NEW", "mengosongkan jurnal", CMDNew},
     {"HELP", "menampilkan daftar perintah", CMDHelp},
     {"QUIT", "keluar dari program", CMDQuit},
+    {"LOAD", "memuat jurnal dari folder", CMDLoad},
+    {"SAVE", "menyimpan jurnal ke folder", CMDSave},
 };
 
 #define JumlahPerintah ((int)(sizeof(daftar) / sizeof(daftar[0])))
