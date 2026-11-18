@@ -22,7 +22,7 @@ void link()
             {
                 addEdge(&LinkToPages, idp1, idp2);
                 addEdge(&LinkFromPages, idp2, idp1);
-                printf("Link berhasil ditambahkan.\n")
+                printf("Link berhasil ditambahkan.\n");
             }
             else printf("Invalid page :(\n");
         }
@@ -46,7 +46,7 @@ void unlink()
             {
                 deleteEdge(&LinkToPages, idp1, idp2);
                 deleteEdge(&LinkFromPages, idp2, idp1);
-                printf("Link berhasil dihapus.\n")
+                printf("Link berhasil dihapus.\n");
             }
             else printf("Invalid page :(\n");
         }
