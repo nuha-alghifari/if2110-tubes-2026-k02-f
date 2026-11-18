@@ -22,8 +22,8 @@ void tagAdd()
                 printf("Tag sudah ada :(");
             else
             {
-                printf("Tag T%d berhasil dibuat",idcounter-1);
                 insertLastMLTag(&tagpage, t);
+                printf("Tag T%d berhasil dibuat",idcounter-1);
             }
         }
         else printf("Nama tag tidak valid!");
@@ -50,19 +50,19 @@ void tag()
                     if(isAlreadyTagged(p,t))
                     {
                         printf("Already tagged :(");
-                        return;
                     }
                     else
                     {
                         insertLinkedListTag(&tagpage, t->info, p->info);
                         insertLinkedListPage(&pagetag, p->info, t->info);
+                        printf("Tag berhasil dipasang.");
                     }
                 }
+                else printf("Invalid tag :(");
             }
         }
+        else printf("Invalid page :(");
     }
-    printf("Invalid tag/page :(");
-	return;
 }
 
 void untag()
@@ -82,16 +82,15 @@ void untag()
                 t=searchMLTagByID(tagpage,idt);
                 if(t!=NULL)
                 {
-                    printf("Tag berhasil dilepas.");
                     deleteLinkedListTag(&tagpage, t->info, p->info);
 	                deleteLinkedListPage(&pagetag, p->info, t->info);
+                    printf("Tag berhasil dilepas.");
                 }
+                else printf("Invalid tag :(");
             }
-            return;
         }
+        else printf("Invalid page :(");
     }
-    printf("Invalid tag/page :(");
-	return;
 }
 
 void tagdelete()
@@ -108,7 +107,6 @@ void tagdelete()
             StatusInput s2=TanyaYN(NULL,&ya);
             if(ya)
             {
-                printf("Tag berhasil dilepas.");
                 AddresslistPage tp=t->child;
                 while(tp!=NULL)
                 {
@@ -116,12 +114,11 @@ void tagdelete()
                     tp=tp->next;
                 }
                 deleteAtMLTag(&tagpage, t->info);
+                printf("Tag berhasil dihapus.");
             }
-            return;
         }
+        else printf("Invalid tag :(");
     }
-    printf("Invalid tag :(");
-	return;
 }
 
 void taglist()
@@ -151,9 +148,8 @@ void pagetags()
             }
             return;
         }
+        else printf("Invalid page :(");
     }
-    printf("Invalid page :(");
-	return;
 }
 
 void tagpages()
@@ -168,26 +164,20 @@ void tagpages()
             AddresslistPage p=t->child;
             while(p!=NULL)
             {
-                printf("[P%d] %s", p->info, "test"); //Belum diimplementasi
+                printf("[T%d] %s", p->info, "test"); //Belum diimplementasi
                 p=p->next;
             }
             return;
         }
+        else printf("Invalid tag :(");
     }
-    printf("Invalid tag :(");
-	return;
 }
 
 bool isAlreadyTagged(AddressMultiListPage p, AddressMultiListTag mt)
 {
-    AddresslistTag t=p->child;
-    bool tagged=false;
-    while((t!=NULL) && (!tagged))
-    {
-        if(t->info.id==mt->info.id) tagged=true;
-        else t=t->next;
-    }
-    return tagged;
+    AddresslistTag t=searchTag(p->child,mt->info);
+    if(t!=NULL) return false;
+    else return true;
 }
 
 // bool isTagIdxValid(int id)

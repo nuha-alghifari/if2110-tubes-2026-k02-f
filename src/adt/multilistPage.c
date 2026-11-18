@@ -9,19 +9,22 @@ void CreateMultiListPage(MultiListPage *l)
 void insertLastMLPage(MultiListPage *l, Page x)
 {
     AddressMultiListPage new=newNodeMLPage(x);
-    if(*l==NULL)
+    if(new!=NULL)
     {
-        *l=new;
-    }
-    else
-    {
-        AddressMultiListPage p=*l;
-        //AddressMultiListPage prec=NULL;
-        while(p->next!=NULL)
+        if(*l==NULL)
         {
-            p=p->next;
+            *l=new;
         }
-        p->next=new;
+        else
+        {
+            AddressMultiListPage p=*l;
+            //AddressMultiListPage prec=NULL;
+            while(p->next!=NULL)
+            {
+                p=p->next;
+            }
+            p->next=new;
+        }
     }
 }
 void insertLinkedListPage(MultiListPage *l, Page x, Tag y)

@@ -9,19 +9,22 @@ void CreateMultiListTag(MultiListTag *l)
 void insertLastMLTag(MultiListTag *l, Tag x)
 {
     AddressMultiListTag new=newNodeMLTag(x);
-    if(*l==NULL)
+    if(new!=NULL)
     {
-        *l=new;
-    }
-    else
-    {
-        AddressMultiListTag p=*l;
-        //AddressMultiListTag prec=NULL;
-        while(p->next!=NULL)
+        if(*l==NULL)
         {
-            p=p->next;
+            *l=new;
         }
-        p->next=new;
+        else
+        {
+            AddressMultiListTag p=*l;
+            //AddressMultiListTag prec=NULL;
+            while(p->next!=NULL)
+            {
+                p=p->next;
+            }
+            p->next=new;
+        }
     }
 }
 void insertLinkedListTag(MultiListTag *l, Tag x, Page y)

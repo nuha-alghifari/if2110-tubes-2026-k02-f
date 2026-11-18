@@ -33,42 +33,45 @@ AddresslistTag newNodeTag(ElListTag x)
 void insertSortedTag(LinkedlistTag *l, ElListTag x)
 {
     AddresslistTag new=newNodeTag(x);
-    AddresslistTag p, prec;
-    prec=NULL;
-    if(*l==NULL)
+    if(new!=NULL)
     {
-        *l=new;
-    }
-    else
-    {
-        p=*l;
-        bool found=false;
-        while((p!=NULL) && (!found))
+        AddresslistTag p, prec;
+        prec=NULL;
+        if(*l==NULL)
         {
-            if(isBeforeTag(x,p->info))
-            {
-                found=true;
-            }
-            else
-            {
-                prec=p;
-                p=p->next;
-            }
+            *l=new;
         }
-        if(found)
+        else
         {
-            if(prec==NULL)
+            p=*l;
+            bool found=false;
+            while((p!=NULL) && (!found))
             {
-                new->next=p;
-                *l=new;
+                if(isBeforeTag(x,p->info))
+                {
+                    found=true;
+                }
+                else
+                {
+                    prec=p;
+                    p=p->next;
+                }
             }
-            else
+            if(found)
             {
-                new->next=prec->next;
-                prec->next=new;
+                if(prec==NULL)
+                {
+                    new->next=p;
+                    *l=new;
+                }
+                else
+                {
+                    new->next=prec->next;
+                    prec->next=new;
+                }
             }
+            else prec->next=new;
         }
-        else prec->next=new;
     }
 }
 AddresslistTag searchTag(LinkedlistTag l, ElListTag x)

@@ -33,42 +33,45 @@ AddresslistPage newNodePage(ElListPage x)
 void insertSortedPage(LinkedlistPage *l, ElListPage x)
 {
     AddresslistPage new=newNodePage(x);
-    AddresslistPage p, prec;
-    prec=NULL;
-    if(*l==NULL)
+    if(new!=NULL)
     {
-        *l=new;
-    }
-    else
-    {
-        p=*l;
-        bool found=false;
-        while((p!=NULL) && (!found))
+        AddresslistPage p, prec;
+        prec=NULL;
+        if(*l==NULL)
         {
-            if(isBeforePage(x,p->info)) //Masih temp, perlu diganti
-            {
-                found=true;
-            }
-            else
-            {
-                prec=p;
-                p=p->next;
-            }
+            *l=new;
         }
-        if(found)
+        else
         {
-            if(prec==NULL)
+            p=*l;
+            bool found=false;
+            while((p!=NULL) && (!found))
             {
-                new->next=p;
-                *l=new;
+                if(isBeforePage(x,p->info)) //Masih temp, perlu diganti
+                {
+                    found=true;
+                }
+                else
+                {
+                    prec=p;
+                    p=p->next;
+                }
             }
-            else
+            if(found)
             {
-                new->next=prec->next;
-                prec->next=new;
+                if(prec==NULL)
+                {
+                    new->next=p;
+                    *l=new;
+                }
+                else
+                {
+                    new->next=prec->next;
+                    prec->next=new;
+                }
             }
+            else prec->next=new;
         }
-        else prec->next=new;
     }
 }
 AddresslistPage searchPage(LinkedlistPage l, ElListPage x)

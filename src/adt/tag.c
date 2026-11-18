@@ -67,7 +67,7 @@ bool isBeforeTag(Tag t1, Tag t2)
 	int i=0;
 	bool before;
 	bool selesai=false;
-	while((i<t1.length) && (i<t2.length))
+	while((i<t1.length) && (i<t2.length) &&(!selesai))
 	{
 		if(t1.kata[i]==t2.kata[i])
 		{

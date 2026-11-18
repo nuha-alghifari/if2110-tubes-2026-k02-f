@@ -17,6 +17,6 @@ void tagdelete();
 void taglist();
 void pagetags();
 void tagpages();
-
+bool isAlreadyTagged(AddressMultiListPage p, AddressMultiListTag mt);
 
 #endif
