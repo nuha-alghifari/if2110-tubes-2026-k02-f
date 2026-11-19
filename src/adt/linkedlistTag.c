@@ -1,9 +1,8 @@
 #include "LinkedlistTag.h"
-#include <stdlib.h>
 
 void createListTag(LinkedlistTag *l)
 {
-    l==NULL;
+    *l==NULL;
 }
 int lengthListTag(LinkedlistTag l)
 {
@@ -90,20 +89,23 @@ void deleteLastTag(LinkedlistTag *l)
 {
     AddresslistTag p=*l;
     AddresslistTag prec=NULL;
-    while(p->next!=NULL)
+    if(p!=NULL)
     {
-        prec=p;
-        p=p->next;
-    }
-    if(prec==NULL)
-    {
-        *l=NULL;
-        free(p);
-    }
-    else
-    {
-        prec->next=NULL;
-        free(p);
+        while(p->next!=NULL)
+        {
+            prec=p;
+            p=p->next;
+        }
+        if(prec==NULL)
+        {
+            *l=NULL;
+            free(p);
+        }
+        else
+        {
+            prec->next=NULL;
+            free(p);
+        }
     }
 }
 
@@ -145,14 +147,3 @@ void deleteAllTag(LinkedlistTag *l)
     *l=NULL;
 }
 
-int lengthTag(LinkedlistTag l)
-{
-    int lth=0;
-    AddresslistTag p=l;
-    while(p!=NULL)
-    {
-        lth++;
-        p=p->next;
-    }
-    return lth;
-}

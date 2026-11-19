@@ -1,9 +1,8 @@
 #include "linkedlistPage.h"
-#include <stdlib.h>
 
 void createListPage(LinkedlistPage *l)
 {
-    l==NULL;
+    *l==NULL;
 }
 int lengthListPage(LinkedlistPage l)
 {
@@ -90,20 +89,23 @@ void deleteLastPage(LinkedlistPage *l)
 {
     AddresslistPage p=*l;
     AddresslistPage prec=NULL;
-    while(p->next!=NULL)
+    if(p!=NULL)
     {
-        prec=p;
-        p=p->next;
-    }
-    if(prec==NULL)
-    {
-        *l=NULL;
-        free(p);
-    }
-    else
-    {
-        prec->next=NULL;
-        free(p);
+        while(p->next!=NULL)
+        {
+            prec=p;
+            p=p->next;
+        }
+        if(prec==NULL)
+        {
+            *l=NULL;
+            free(p);
+        }
+        else
+        {
+            prec->next=NULL;
+            free(p);
+        }
     }
 }
 
@@ -151,14 +153,3 @@ bool isBeforePage(Page p1, Page p2) //Perlu diganti
     else return false;
 }
 
-int lengthPage(LinkedlistPage l)
-{
-    int lth=0;
-    AddresslistPage p=l;
-    while(p!=NULL)
-    {
-        lth++;
-        p=p->next;
-    }
-    return lth;
-}
