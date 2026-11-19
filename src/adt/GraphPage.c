@@ -10,6 +10,7 @@ Vertex newVertex(Page p)
     Vertex v;
     v.info=p;
     createListPage(&v.Edge);
+    return v;
 }
 
 void insertVertex(Graph *g, Page p)
@@ -21,6 +22,7 @@ void insertVertex(Graph *g, Page p)
         {
             g->node[i]=g->node[i+1];
         }
+        deleteAllPage(g->node[999].Edge);
         g->node[999]=newVertex(p);
     }
 }
@@ -41,8 +43,8 @@ int SearchVertexIdx(Graph g, Page p)
 
 void addEdge(Graph *g, Page from, Page to)
 {
-    int id1=SearchVertex(*g,from);
-    int id2=SearchVertex(*g,to);
+    int id1=SearchVertexIdx(*g,from);
+    int id2=SearchVertexIdx(*g,to);
     if((id1!=INVALID_IDX) && (id2!=INVALID_IDX))
     {
         insertSortedPage(&g->node[id1].Edge,to);
@@ -51,8 +53,8 @@ void addEdge(Graph *g, Page from, Page to)
 
 void deleteEdge(Graph *g, Page from, Page to)
 {
-    int id1=SearchVertex(*g,from);
-    int id2=SearchVertex(*g,to);
+    int id1=SearchVertexIdx(*g,from);
+    int id2=SearchVertexIdx(*g,to);
     if((id1!=INVALID_IDX) && (id2!=INVALID_IDX))
     {
         deleteAtPage(&g->node[id1].Edge,to);
