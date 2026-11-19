@@ -1,6 +1,7 @@
 #ifndef LinkedlistTagTAG_H
 #define LINDKEDLISTTAG_H
 #include "tag.h"
+#include <stdlib.h>
 #define ElListTag Tag
 
 typedef struct node* AddresslistTag;
@@ -18,6 +19,5 @@ AddresslistTag searchTag(LinkedlistTag l, ElListTag x);
 void deleteLastTag(LinkedlistTag *l);
 void deleteAtTag(LinkedlistTag *l, ElListTag x);
 void deleteAllTag(LinkedlistTag *l);
-int lengthTag(LinkedlistTag l);
 
 #endif

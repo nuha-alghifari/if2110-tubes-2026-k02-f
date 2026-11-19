@@ -5,6 +5,7 @@
 #define Page int
 #define ElListPage Page // Masih temporary
 #include <stdbool.h>
+#include <stdlib.h>
 
 //typedef int ElListPage;// Masih temporary
 
@@ -24,6 +25,5 @@ void deleteLastPage(LinkedlistPage *l);
 void deleteAtPage(LinkedlistPage *l, ElListPage x);
 void deleteAllPage(LinkedlistPage *l);
 bool isBeforePage(Page p1, Page p2);
-int lengthPage(LinkedlistPage l);
 
 #endif
