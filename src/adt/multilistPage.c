@@ -4,7 +4,7 @@
 
 void CreateMultiListPage(MultiListPage *l)
 {
-    l=NULL;
+    *l=NULL;
 }
 void insertLastMLPage(MultiListPage *l, Page x)
 {
@@ -91,6 +91,7 @@ AddressMultiListPage newNodeMLPage(Page x)
     else
     {
         new->info=x;
+        createListTag(&new->child);
         return new;
     }
 }
@@ -110,11 +111,13 @@ void deleteAtMLPage(MultiListPage *l, Page x)
         if(prec==NULL)
         {
             *l=p->next;
+            deleteAllTag(p->child);
             free(p); //Apakah ini cukup?
         }
         else
         {
             prec->next=p->next;
+            deleteAllTag(p->child);
             free(p);
         }
     }

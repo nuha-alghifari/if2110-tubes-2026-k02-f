@@ -4,7 +4,7 @@
 
 void CreateMultiListTag(MultiListTag *l)
 {
-    l=NULL;
+    *l=NULL;
 }
 void insertLastMLTag(MultiListTag *l, Tag x)
 {
@@ -91,6 +91,7 @@ AddressMultiListTag newNodeMLTag(Tag x)
     else
     {
         new->info=x;
+        createListPage(&new->child);
         return new;
     }
 }
@@ -110,11 +111,13 @@ void deleteAtMLTag(MultiListTag *l, Tag x)
         if(prec==NULL)
         {
             *l=p->next;
+            deleteAllPage(p->child);
             free(p); //Apakah ini cukup?
         }
         else
         {
             prec->next=p->next;
+            deleteAllPage(p->child);
             free(p);
         }
     }
