@@ -4,6 +4,11 @@ void initLink()
 {
     createGraph(&LinkFromPages);
     createGraph(&LinkToPages);
+    for(int i=0;i<10;i++)
+    {
+        insertVertex(&LinkFromPages,1); //Perlu diubah
+        insertVertex(&LinkToPages,1);  //Perlu diubah
+    }
 }
 
 void link()
