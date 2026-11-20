@@ -1,175 +1,261 @@
 #include <stdio.h>
 #include "block_cmd.h"
+#include "input.h"
 
-static void CetakUrutanID(const ListBlok *list){
-    AddressBlok p = list->first;
-    while (p != NULL){
-        printf("B%d", p->id);
-        if (p->next != NULL) printf(", ");
-        p = p->next;
+static void CetakUrutanID(const ListBlok *list) {
+    AddressBlok p;
+
+    for (p = list->first; p != NULL; p = p->next) {
+        printf("B%d%s", p->id, p->next != NULL ? ", " : "");
     }
 }
 
-void CetakDaftarBlok(const ListBlok *list){
-    AddressBlok p = list->first;
-    int pos = 1;
+void CetakDaftarBlok(const ListBlok *list) {
+    AddressBlok p;
+    int posisi = 1;
 
-    if (p == NULL){
+    if (list->first == NULL) {
         printf("(kosong)\n");
         return;
     }
-    while (p != NULL){
-        if (p->tipe == BlokCheck){
-            printf("%d. [B%d] CHECK [%c] %s\n", pos, p->id, p->selesai ? 'x' : ' ', p->teks.tab);
+    for (p = list->first; p != NULL; p = p->next) {
+        if (p->tipe == BlokCheck) {
+            printf("%d. [B%d] CHECK [%c] %s\n", posisi, p->id, p->selesai ? 'x' : ' ', p->teks.tab);
         } else {
-            printf("%d. [B%d] TEXT %s\n", pos, p->id, p->teks.tab);
+            printf("%d. [B%d] TEXT %s\n", posisi, p->id, p->teks.tab);
         }
-        pos++;
-        p = p->next;
+        posisi++;
     }
 }
 
-bool ProsesBlockAdd(ListBlok *list, int idBlokBaru, const Kata *tipe, const Kata *posisi, const Kata *teks){
-    TipeBlok tipeBlok;
-    int pos;
-    StatusBlok status;
+// Cetak alasan gagal 
+static void CetakGagal(StatusBlok status, int idBlok, int batasPosisi) {
+    switch (status) {
+        case BlokTidakDitemukan:
+            printf("Blok B%d tidak ditemukan.\n", idBlok);
+            break;
+        case BlokTeksKosong:
+            printf("Teks tidak boleh kosong.\n");
+            break;
+        case BlokPosisiDiLuarRentang:
+            printf("Posisi harus antara 1 dan %d.\n", batasPosisi);
+            break;
+        case BlokBukanChecklist:
+            printf("Blok B%d bukan checklist.\n", idBlok);
+            break;
+        default:
+            printf("Memori tidak cukup.\n");
+            break;
+    }
+}
 
-    if (!KataKeTipeBlok(tipe, &tipeBlok)){
-        printf("Blok tidak dapat dibuat: tipe harus TEXT atau CHECK.\n");
+bool ProsesBlockAdd(ListBlok *list, int idBlokBaru, const Kata *tipe, const Kata *posisi, const Kata *teks) {
+    TipeBlok tipeBlok;
+    StatusBlok status;
+    int pos;
+
+    if (!KataKeTipeBlok(tipe, &tipeBlok)) {
+        printf("Tipe harus TEXT atau CHECK.\n");
         return false;
     }
-    if (!KataKeInt(posisi, &pos)){
-        printf("Blok tidak dapat dibuat: posisi harus berupa bilangan bulat.\n");
+    if (!KataKeInt(posisi, &pos)) {
+        printf("Posisi harus berupa bilangan bulat.\n");
         return false;
     }
 
     status = TambahBlok(list, idBlokBaru, tipeBlok, teks, pos);
-    switch (status){
-        case BlokOK:
-            if (tipeBlok == BlokCheck){
-                printf("Blok B%d berhasil ditambahkan dengan status TODO.\n", idBlokBaru);
-            } else {
-                printf("Blok B%d berhasil ditambahkan.\n", idBlokBaru);
-            }
-            return true;
-        case BlokPosisiDiLuarRentang:
-            printf("Blok tidak dapat dibuat: posisi harus antara 1 dan %d.\n", JumlahBlok(list) + 1);
-            return false;
-        case BlokTeksKosong:
-            printf("Blok tidak dapat dibuat: teks tidak boleh kosong.\n");
-            return false;
-        default:
-            printf("Blok tidak dapat dibuat: memori tidak cukup.\n");
-            return false;
+    if (status != BlokOK) {
+        CetakGagal(status, idBlokBaru, JumlahBlok(list) + 1);
+        return false;
     }
+
+    if (tipeBlok == BlokCheck) {
+        printf("Blok B%d berhasil ditambahkan dengan status TODO.\n", idBlokBaru);
+    } else {
+        printf("Blok B%d berhasil ditambahkan.\n", idBlokBaru);
+    }
+    return true;
 }
 
-bool ProsesBlockEdit(ListBlok *list, int idBlok, const Kata *teksBaru){
+bool ProsesBlockEdit(ListBlok *list, int idBlok, const Kata *teksBaru) {
     StatusBlok status = UbahTeksBlok(list, idBlok, teksBaru);
-    switch (status){
-        case BlokOK:
-            printf("Teks B%d berhasil diubah.\n", idBlok);
-            return true;
-        case BlokTidakDitemukan:
-            printf("Teks tidak dapat diubah: blok B%d tidak ditemukan.\n", idBlok);
-            return false;
-        case BlokTeksKosong:
-            printf("Teks tidak dapat diubah: teks tidak boleh kosong.\n");
-            return false;
-        default:
-            printf("Teks tidak dapat diubah.\n");
-            return false;
+
+    if (status != BlokOK) {
+        CetakGagal(status, idBlok, 0);
+        return false;
     }
+    printf("Teks B%d berhasil diubah.\n", idBlok);
+    return true;
 }
 
-bool ProsesBlockMove(ListBlok *list, int idHalaman, int idBlok, const Kata *posisiBaru){
-    int pos;
+bool ProsesBlockMove(ListBlok *list, int idHalaman, int idBlok, const Kata *posisiBaru) {
     StatusBlok status;
+    int pos;
 
-    if (!KataKeInt(posisiBaru, &pos)){
-        printf("Blok tidak dapat dipindahkan: posisi harus berupa bilangan bulat.\n");
+    if (!KataKeInt(posisiBaru, &pos)) {
+        printf("Posisi harus berupa bilangan bulat.\n");
         return false;
     }
 
     status = PindahBlok(list, idBlok, pos);
-    switch (status){
-        case BlokOK:
-            printf("B%d berhasil dipindahkan. Urutan blok P%d: ", idBlok, idHalaman);
-            CetakUrutanID(list);
-            printf(".\n");
-            return true;
-        case BlokTidakDitemukan:
-            printf("Blok tidak dapat dipindahkan: blok B%d tidak ditemukan.\n", idBlok);
-            return false;
-        case BlokPosisiDiLuarRentang:
-            printf("Blok tidak dapat dipindahkan: posisi harus antara 1 dan %d.\n", JumlahBlok(list));
-            return false;
-        default:
-            printf("Blok tidak dapat dipindahkan.\n");
-            return false;
+    if (status != BlokOK) {
+        CetakGagal(status, idBlok, JumlahBlok(list));
+        return false;
     }
+
+    printf("B%d berhasil dipindahkan. Urutan blok P%d: ", idBlok, idHalaman);
+    CetakUrutanID(list);
+    printf(".\n");
+    return true;
 }
 
-bool ProsesBlockDelete(ListBlok *list, int idBlok){
+bool ProsesBlockDelete(ListBlok *list, int idBlok) {
     StatusBlok status = HapusBlok(list, idBlok);
-    if (status == BlokOK){
-        printf("Blok B%d berhasil dihapus.\n", idBlok);
-        return true;
+
+    if (status != BlokOK) {
+        CetakGagal(status, idBlok, 0);
+        return false;
     }
-    printf("Blok tidak dapat dihapus: blok B%d tidak ditemukan.\n", idBlok);
-    return false;
+    printf("Blok B%d berhasil dihapus.\n", idBlok);
+    return true;
 }
 
-bool ProsesCheck(ListBlok *list, int idBlok, const Kata *status){
-    bool selesai;
+bool ProsesCheck(ListBlok *list, int idBlok, const Kata *status) {
     StatusBlok hasil;
+    bool selesai;
 
-    if (KataSamaC(status, "DONE")){
+    if (KataSamaC(status, "DONE")) {
         selesai = true;
-    } else if (KataSamaC(status, "TODO")){
+    } else if (KataSamaC(status, "TODO")) {
         selesai = false;
     } else {
-        printf("Status tidak dapat diubah: status harus TODO atau DONE.\n");
+        printf("Status harus TODO atau DONE.\n");
         return false;
     }
 
     hasil = UbahStatusBlok(list, idBlok, selesai);
-    switch (hasil){
-        case BlokOK:
-            if (selesai){
-                printf("Checklist B%d berhasil ditandai selesai.\n", idBlok);
-            } else {
-                printf("Checklist B%d berhasil dikembalikan ke TODO.\n", idBlok);
-            }
-            return true;
-        case BlokTidakDitemukan:
-            printf("Status tidak dapat diubah: blok B%d tidak ditemukan.\n", idBlok);
-            return false;
-        case BlokBukanChecklist:
-            printf("Status tidak dapat diubah: blok B%d bukan checklist.\n", idBlok);
-            return false;
-        default:
-            printf("Status tidak dapat diubah.\n");
-            return false;
+    if (hasil != BlokOK) {
+        CetakGagal(hasil, idBlok, 0);
+        return false;
+    }
+
+    if (selesai) {
+        printf("Checklist B%d berhasil ditandai selesai.\n", idBlok);
+    } else {
+        printf("Checklist B%d berhasil dikembalikan ke TODO.\n", idBlok);
+    }
+    return true;
+}
+
+// todo
+static ListBlok *CariListBlokHalaman(Jurnal *J, int idHalaman) {
+    (void)J;
+    (void)idHalaman;
+    return NULL;
+}
+
+//todo
+static ListBlok *CariListBlokPemilik(Jurnal *J, int idBlok, int *idHalaman) {
+    (void)J;
+    (void)idBlok;
+    (void)idHalaman;
+    return NULL;
+}
+
+static ListBlok *AmbilListPemilik(Jurnal *J, int idBlok, int *idHalaman) {
+    ListBlok *list = CariListBlokPemilik(J, idBlok, idHalaman);
+
+    if (list == NULL) {
+        CetakGagal(BlokTidakDitemukan, idBlok, 0);
+    }
+    return list;
+}
+
+void CMDBlockAdd(Jurnal *J) {
+    int idHalaman;
+    int idBaru;
+    Kata tipe, posisi, teks;
+    ListBlok *list;
+
+    if (TanyaID("Masukkan ID halaman:", 'P', &idHalaman) != InputOK) return;
+    if (idHalaman == 0) {
+        printf("P0 tidak dapat memiliki blok.\n");
+        return;
+    }
+    list = CariListBlokHalaman(J, idHalaman);
+    if (list == NULL) {
+        printf("Halaman P%d tidak ditemukan.\n", idHalaman);
+        return;
+    }
+    if (Tanya("Masukkan tipe blok (TEXT/CHECK):", &tipe) != InputOK) return;
+    if (Tanya("Masukkan posisi:", &posisi) != InputOK) return;
+    if (TanyaTidakKosong("Masukkan teks:", &teks) != InputOK) return;
+
+    idBaru = J->nextBlockId;
+    if (ProsesBlockAdd(list, idBaru, &tipe, &posisi, &teks)) {
+        AmbilIDBlok(J);     // if sukses
+        TandaiUbah(J);
     }
 }
 
-void PerintahBlockAdd(void){
+void CMDBlockEdit(Jurnal *J) {
+    int idBlok;
+    int idHalaman;
+    Kata teksBaru;
+    ListBlok *list;
 
+    if (TanyaID("Masukkan ID blok:", 'B', &idBlok) != InputOK) return;
+    list = AmbilListPemilik(J, idBlok, &idHalaman);
+    if (list == NULL) return;
+    if (TanyaTidakKosong("Masukkan teks baru:", &teksBaru) != InputOK) return;
+
+    if (ProsesBlockEdit(list, idBlok, &teksBaru)) {
+        TandaiUbah(J);
+    }
 }
 
-void PerintahBlockEdit(void){
+void CMDBlockMove(Jurnal *J) {
+    int idBlok;
+    int idHalaman;
+    Kata posisiBaru;
+    ListBlok *list;
 
+    if (TanyaID("Masukkan ID blok:", 'B', &idBlok) != InputOK) return;
+    list = AmbilListPemilik(J, idBlok, &idHalaman);
+    if (list == NULL) return;
+    if (Tanya("Masukkan posisi baru:", &posisiBaru) != InputOK) return;
+
+    if (ProsesBlockMove(list, idHalaman, idBlok, &posisiBaru)) {
+        TandaiUbah(J);
+    }
 }
 
-void PerintahBlockMove(void){
+void CMDBlockDelete(Jurnal *J) {
+    int idBlok;
+    int idHalaman;
+    ListBlok *list;
 
+    if (TanyaID("Masukkan ID blok:", 'B', &idBlok) != InputOK) return;
+    list = AmbilListPemilik(J, idBlok, &idHalaman);
+    if (list == NULL) return;
+
+    if (ProsesBlockDelete(list, idBlok)) {
+        TandaiUbah(J);
+    }
 }
 
-void PerintahBlockDelete(void){
+void CMDCheck(Jurnal *J) {
+    int idBlok;
+    int idHalaman;
+    Kata status;
+    ListBlok *list;
 
-}
+    if (TanyaID("Masukkan ID blok:", 'B', &idBlok) != InputOK) return;
+    list = AmbilListPemilik(J, idBlok, &idHalaman);
+    if (list == NULL) return;
+    if (Tanya("Masukkan status (TODO/DONE):", &status) != InputOK) return;
 
-void PerintahCheck(void){
-
+    if (ProsesCheck(list, idBlok, &status)) {
+        TandaiUbah(J);
+    }
 }
