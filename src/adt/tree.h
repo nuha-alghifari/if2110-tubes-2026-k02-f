@@ -17,6 +17,7 @@ typedef struct TreeNode {
 
 
 AddressPage findLastSibling(AddressPage parent);
+AddressPage findPrevSibling(AddressPage current, AddressPage target);
 AddressPage createPage(Kata id, Kata title);
 void deallocatePage(AddressPage p);
 AddressPage findPage(AddressPage root, Kata targetId);
@@ -25,5 +26,5 @@ int getDepth(AddressPage root);
 bool isSubtree(AddressPage parent, AddressPage target);
 void printTree(AddressPage root, int level);
 void deleteSubtree(AddressPage root);
-
+int countBlocks(AddressPage target);
 #endif
