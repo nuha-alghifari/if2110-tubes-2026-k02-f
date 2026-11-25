@@ -21,6 +21,7 @@ typedef enum {
 } ArahUrut;
 
 
+int KumpulkanHalaman(const Jurnal *J, InfoHalaman **daftar);
 int CariHalaman(const InfoHalaman *daftar, int n, const Kata *kunci, InfoHalaman *hasil);
 
 
