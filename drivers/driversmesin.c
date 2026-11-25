@@ -60,6 +60,8 @@ int main (void){
 
     StartString(&m, "");
     cek(masukan(&m, BacaEOF, ""), "kata sumber kosong");
+    StartString(&m, "PAGEADD\tP1\nJudul  baru;");
+    cek(masukan(&m, BacaOK, "PAGEADD P1 Judul  baru"), "kata tab dan newline jadi spasi");
 
     for (i = 0; i < Max_Kata; i++) panjang[i] = 'a';
     panjang[Max_Kata] = ';';

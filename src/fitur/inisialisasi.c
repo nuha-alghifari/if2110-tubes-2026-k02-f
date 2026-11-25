@@ -22,12 +22,16 @@ bool Inisialisasi(Jurnal *J){
         InitJurnal(&baru);
         if (MuatJurnal(&baru, folder.tab, pesan, Max_Pesan)){
             TukarJurnal(J, &baru);
-            KosongkanJurnal(&baru);  // sekarang isinya jurnal lama (kosong)
+            HapusJurnal(&baru);  // sekarang isinya jurnal lama (kosong)
             J->perubahan = false;
-            printf("Konfigurasi berhasil dimuat. %s\n", pesan);
+            if (HitungHalaman(J) == 0 && HitungBlok(J) == 0 && HitungTag(J) == 0){
+                printf("Jurnal kosong berhasil dimuat.\n");
+            } else {
+                printf("Konfigurasi berhasil dimuat. Jurnal berisi %d halaman, %d blok, dan %d tag.\n", HitungHalaman(J), HitungBlok(J), HitungTag(J));
+            }
             return true;
         }
-        KosongkanJurnal(&baru);
+        HapusJurnal(&baru);
         printf("Pemuatan gagal: %s\n", pesan);
     }
 }

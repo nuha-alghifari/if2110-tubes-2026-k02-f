@@ -16,6 +16,7 @@ void PangkasKata(Kata *k); // buang spasi, tab, newline
 
 bool KataSama(const Kata *a, const Kata *b); //true kalau persis sama
 bool KataSamaC(const Kata *a, const char *b); //true kalau sama dengan string
+bool KataSamaCTanpaKapital(const Kata *a, const char *b); //true kalau sama dengan string, huruf besar/kecil diabaikan
 int BandingKataTanpaKapital(const Kata *a, const Kata *b); //-1 kalau a duluan, 0 kalau b duluan
 bool KataMengandung(const Kata *teks, const Kata *tab); //true kalau teks mengandung tab
 

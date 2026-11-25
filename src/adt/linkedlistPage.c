@@ -1,8 +1,9 @@
 #include "linkedlistPage.h"
+#include <stdio.h>
 
 void createListPage(LinkedlistPage *l)
 {
-    *l==NULL;
+    *l = NULL;
 }
 int lengthListPage(LinkedlistPage l)
 {
@@ -26,6 +27,7 @@ AddresslistPage newNodePage(ElListPage x)
     else
     {
         new->info=x;
+        new->next=NULL;
         return new;
     }
 }
