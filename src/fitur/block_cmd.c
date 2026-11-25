@@ -147,19 +147,19 @@ bool ProsesCheck(ListBlok *list, int idBlok, const Kata *status) {
     return true;
 }
 
-// todo
 static ListBlok *CariListBlokHalaman(Jurnal *J, int idHalaman) {
-    (void)J;
-    (void)idHalaman;
-    return NULL;
+    AddressPage p = CariHalamanJurnal(J, idHalaman);
+    if (p == NULL) return NULL;
+    return &p->blocks;
 }
 
-//todo
 static ListBlok *CariListBlokPemilik(Jurnal *J, int idBlok, int *idHalaman) {
-    (void)J;
-    (void)idBlok;
-    (void)idHalaman;
-    return NULL;
+    AddressPage p = CariPemilikBlok(J, idBlok);
+    int nomor = 0;
+    if (p == NULL) return NULL;
+    KataKeID(&p->pageId, 'P', &nomor);
+    *idHalaman = nomor;
+    return &p->blocks;
 }
 
 static ListBlok *AmbilListPemilik(Jurnal *J, int idBlok, int *idHalaman) {
