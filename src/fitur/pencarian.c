@@ -74,11 +74,37 @@ void CetakInfoHalaman(const InfoHalaman *h) {
     printf("[P%d] %s (parent P%d)\n", h->id, h->judul.tab, h->idParent);
 }
 
-//  todo
-static int KumpulkanHalaman(Jurnal *J, InfoHalaman **daftar) {
-    (void)J;
+static void IsiDaftarHalaman(AddressPage node, InfoHalaman *daftar, int *idx) {
+    int id = 0;
+    int idParent = 0;
+
+    if (node == NULL) return;
+    KataKeID(&node->pageId, 'P', &id);
+    if (node->parent != NULL) {
+        KataKeID(&node->parent->pageId, 'P', &idParent);
+    }
+    daftar[*idx].id = id;
+    daftar[*idx].idParent = idParent;
+    daftar[*idx].judul = node->title;
+    (*idx)++;
+    IsiDaftarHalaman(node->firstChild, daftar, idx);
+    IsiDaftarHalaman(node->nextSibling, daftar, idx);
+}
+
+int KumpulkanHalaman(const Jurnal *J, InfoHalaman **daftar) {
+    int n;
+    int idx = 0;
+
     *daftar = NULL;
-    return 0;
+    if (J == NULL || J->root == NULL) return 0;
+    n = HitungHalaman(J);
+    if (n <= 0) return 0;
+
+    *daftar = (InfoHalaman *) malloc(sizeof(InfoHalaman) * n);
+    if (*daftar == NULL) return -1;
+
+    IsiDaftarHalaman(J->root->firstChild, *daftar, &idx);
+    return idx;
 }
 
 void CMDSearch(Jurnal *J) {
@@ -90,6 +116,10 @@ void CMDSearch(Jurnal *J) {
     if (TanyaTidakKosong("Masukkan kata pencarian:", &kunci) != InputOK) return;
 
     n = KumpulkanHalaman(J, &semua);
+    if (n < 0) {
+        printf("Memori tidak cukup.\n");
+        return;
+    }
     if (n == 0) {
         printf("Halaman tidak ditemukan.\n");
         return;
@@ -132,6 +162,10 @@ void CMDPages(Jurnal *J) {
     }
 
     n = KumpulkanHalaman(J, &semua);
+    if (n < 0) {
+        printf("Memori tidak cukup.\n");
+        return;
+    }
     if (n == 0) {
         printf("Belum ada halaman.\n");
         return;

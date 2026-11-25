@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "kata.h"
 #include "pencarian.h"
 
@@ -141,12 +142,42 @@ static void ujiKata(void) {
     cek(!KataKeArah(&k, &arah), "arah tidak dikenal ditolak");
 }
 
+static void ujiKumpul(void) {
+    Jurnal j;
+    InfoHalaman *daftar;
+    InfoHalaman hasil[3];
+    Kata kunci;
+    char pesan[Max_Pesan];
+    int n, m;
+
+    InitJurnal(&j);
+    n = KumpulkanHalaman(&j, &daftar);
+    cek(n == 0 && daftar == NULL, "kumpul jurnal kosong");
+    HapusJurnal(&j);
+
+    InitJurnal(&j);
+    cek(MuatJurnal(&j, "sample-data/jurnal", pesan, Max_Pesan), "muat sample untuk pencarian");
+    n = KumpulkanHalaman(&j, &daftar);
+    cek(n == 3 && daftar != NULL, "kumpul 3 halaman tanpa P0");
+
+    kunci = BuatKata("PORTAL");
+    m = CariHalaman(daftar, n, &kunci, hasil);
+    cek(m == 1 && hasil[0].id == 3 && hasil[0].idParent == 1, "cari dari jurnal termuat");
+
+    UrutkanHalaman(daftar, n, UrutJudul, UrutNaik);
+    cek(urutanSama(daftar, n, "1,3,2"), "urut dari jurnal termuat");
+
+    free(daftar);
+    HapusJurnal(&j);
+}
+
 int main(void) {
     InfoHalaman h;
 
     ujiCari();
     ujiUrut();
     ujiKata();
+    ujiKumpul();
 
     printf("contoh\n");
     h = BuatInfo(3, 1, "Portal Kampus");
