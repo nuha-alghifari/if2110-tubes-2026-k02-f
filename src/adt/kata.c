@@ -63,6 +63,14 @@ bool KataSamaC(const Kata *a, const char *b){
     return i == a->length && b[i] == '\0';
 }
 
+bool KataSamaCTanpaKapital(const Kata *a, const char *b){
+    int i = 0;
+    while (i < a->length && b[i] != '\0' && HurufKecil(a->tab[i]) == HurufKecil(b[i])){
+        i++;
+    }
+    return i == a->length && b[i] == '\0';
+}
+
 int BandingKataTanpaKapital(const Kata *a, const Kata *b){
     int i = 0;
     while (i < a->length && i < b-> length){

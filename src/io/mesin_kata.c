@@ -6,7 +6,7 @@ StatusBaca BacaMasukan(MesinKarakter *m, Kata *hasil){
     while (!m->eop && m->cc != ';'){
         char c = m->cc;
         if (c == '\n' || c == '\r' || c == '\t') c = ' ';
-        if (!TambahKata(hasil, m->cc)){
+        if (!TambahKata(hasil, c)){
             kepanjangan = true;
         }
         Adv(m);
