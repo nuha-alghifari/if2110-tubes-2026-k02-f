@@ -3,6 +3,8 @@
 #include "handler.h"
 #include "input.h"
 #include "save_load_cmd.h"
+#include "block_cmd.h"
+#include "pencarian.h"
 
 typedef struct {
     const char *nama;
@@ -16,6 +18,13 @@ static const Perintah daftar[] = {
     {"QUIT", "keluar dari program", CMDQuit},
     {"LOAD", "memuat jurnal dari folder", CMDLoad},
     {"SAVE", "menyimpan jurnal ke folder", CMDSave},
+    {"BLOCKADD", "menambahkan blok pada halaman", CMDBlockAdd},
+    {"BLOCKEDIT", "mengubah teks blok", CMDBlockEdit},
+    {"BLOCKMOVE", "memindahkan posisi blok", CMDBlockMove},
+    {"BLOCKDELETE", "menghapus blok", CMDBlockDelete},
+    {"CHECK", "mengubah status checklist", CMDCheck},
+    {"SEARCH", "mencari halaman berdasarkan judul", CMDSearch},
+    {"PAGES", "menampilkan daftar seluruh halaman", CMDPages},
 };
 
 #define JumlahPerintah ((int)(sizeof(daftar) / sizeof(daftar[0])))
