@@ -37,8 +37,18 @@ static bool findInForest(AddressPage node, AddressPage target){
 void printIndent(int level){
     int i;
     for (i = 0; i < level; i++){
-        printf(" ");
+        printf("  ");
     }
+}
+
+AddressPage findPrevSibling(AddressPage current, AddressPage target) {
+    if (current == NULL || current->nextSibling == NULL){
+        return NULL;
+    }
+    if (current->nextSibling == target){
+        return current;
+    }
+    return findPrevSibling(current->nextSibling, target);
 }
 
 AddressPage findLastSibling(AddressPage child){
@@ -102,13 +112,19 @@ AddressPage findPage(AddressPage root, Kata targetId){
     return findPage(root->nextSibling, targetId);
 }
 
+static int countForestPages(AddressPage root){
+    if (root == NULL){
+        return 0;
+    }
+    return 1 + countForestPages(root->firstChild) + countForestPages(root->nextSibling);
+}
 // harusnya udah bener, tapi masih perlu dites
 int countPages(AddressPage root){
     if (root == NULL) {
         return 0;
     }
 
-    return 1 + countPages(root->firstChild) + countPages(root->nextSibling);
+    return 1 + countForestPages(root->firstChild);
 
 }
 
@@ -133,20 +149,56 @@ int getDepth(AddressPage root){
 }
 
 // masih perlu dites
-void printTree(AddressPage root, int level){
-    if (root == NULL){
+
+static void printForest(AddressPage node, int level){
+    if (node == NULL){
         return;
     }
 
     printIndent(level);
-    printf("- %s - %s\n", root->pageId.tab, root->title.tab);
-    printTree(root->firstChild, level + 1);
-    printTree(root->nextSibling, level);
+    printf("[%s] - %s\n", node->pageId.tab, node->title.tab);
+    printForest(node->firstChild, level + 1);
+    printForest(node->nextSibling, level);
+}
+void printTree(AddressPage node, int level){
+    if (node == NULL){
+        return;
+    }
+
+    printIndent(level);
+    printf("[%s] - %s\n", node->pageId.tab, node->title.tab);
+    printForest(node->firstChild, level + 1);
 }
 
-// TBA, masih perlu perbaikan dari versi sebelumnya
-void deleteSubtree(AddressPage root){
+static int countForestBlocks(AddressPage node) {
+    if (node == NULL) {
+        return 0;
+    }
+    return JumlahBlok(&node->blocks) + countForestBlocks(node->firstChild) + countForestBlocks(node->nextSibling);
+}
 
+int countBlocks(AddressPage target) {
+    if (target == NULL) {
+        return 0;
+    }
+    return JumlahBlok(&target->blocks) + countForestBlocks(target->firstChild);
+}
+
+static void deleteForest(AddressPage node){
+    if (node == NULL){
+        return;
+    }
+    deleteForest(node->firstChild);
+    deleteForest(node->nextSibling);
+    deallocatePage(node);
+}
+
+void deleteSubtree(AddressPage root){
+    if (root == NULL){
+        return;
+    }
+    deleteForest(root->firstChild);
+    deallocatePage(root);
 }
 
 

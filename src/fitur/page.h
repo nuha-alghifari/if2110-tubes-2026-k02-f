@@ -7,10 +7,12 @@ void perintahPageView(AddressPage root, Kata targetId);
 bool PageAdd(AddressPage root, Kata parentId, Kata title);
 bool PageTitle(AddressPage root, Kata pageId, Kata newTitle);
 void PageView(AddressPage root, Kata targetId);
-void Tree(AddressPage root);                
-void Path(AddressPage root);               
-void PageStats(AddressPage root);           
-bool PageMove(AddressPage root);        
-bool PageDelete(AddressPage root);    
+void Tree(AddressPage root, Kata targetId);                
+void Path(AddressPage root, Kata targetId);               
+void PageStats(AddressPage root, Kata targetId);           
+bool PageMove(AddressPage root, Kata targetId, Kata parentId);        
+bool PageDelete(AddressPage root, Kata targetId);    
+void perintahTree(AddressPage root, Kata targetId);
+void perintahPath(AddressPage root, Kata targetId);
 
 #endif
