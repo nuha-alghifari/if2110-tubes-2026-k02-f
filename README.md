@@ -78,6 +78,22 @@ Folder `build/` dan `bin/` dibuat otomatis saat kompilasi dan tidak masuk Git.
 | *Kelvin Sebastian Yen* | *F02, F03, F04* |
 | *Kevin Lincoln Hutabarat* | *F06, F07* |
 
+## Status Fitur
+
+| Kode | Fitur | Status |
+| ---- | ----- | ------ |
+| F00 | Rencana implementasi (ADT, driver, alasan di laporan) | Selesai |
+| F01 | Inisialisasi | Belum |
+| F02 | Manajemen halaman | Belum |
+| F03 | Hierarki halaman | Belum |
+| F04 | Pemindahan dan penghapusan halaman | Belum |
+| F05 | Blok teks dan checklist | Belum |
+| F06 | Link dan backlink | Belum |
+| F07 | Tag | Belum |
+| F08 | Pencarian dan pengurutan halaman | Belum |
+| F09 | Save dan Load | Belum |
+| F10 | Perintah umum (HELP, NEW, QUIT) | Selesai |
+
 ## Sample Data
 
 - **sample-data/jurnal:** 3 halaman, 3 blok, 2 tag, 2 link, dan 3 relasi halaman–tag.

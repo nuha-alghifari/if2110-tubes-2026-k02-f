@@ -42,6 +42,12 @@ static void IsiJurnal(Jurnal *j){
     TandaiUbah(j);
 }
 
+static bool SamaString(const char *a, const char *b){
+    int i = 0;
+    while (a[i] != '\0' && a[i] == b[i]) i++;
+    return a[i] == b[i];
+}
+
 static void cek(bool kondisi, const char *nama){
     total++;
     if (!kondisi){
@@ -89,6 +95,7 @@ int main(void){
     cek(CariHalamanJurnal(&a, 0) == a.root, "CariHalamanJurnal P0");
     cek(CariHalamanJurnal(&a, 1) == NULL, "halaman belum ada");
     cek(CariHalamanJurnal(&a, -1) == NULL, "id negatif ditolak");
+    cek(HitungHalaman(&a) == 0 && HitungBlok(&a) == 0 && HitungTag(&a) == 0, "jurnal baru hitung 0");
 
     IsiJurnal(&a);
     cek(CariHalamanJurnal(&a, 2) != NULL && KataSamaC(&CariHalamanJurnal(&a, 2)->title, "Dua"), "CariHalamanJurnal P2");
@@ -96,6 +103,7 @@ int main(void){
     cek(CariPemilikBlok(&a, 9) == NULL, "CariPemilikBlok blok tidak ada");
     cek(a.linkKeluar.length_vertex == 2 && a.tagPages != NULL, "graph dan tag terisi");
 
+    cek(HitungHalaman(&a) == 2 && HitungBlok(&a) == 1 && HitungTag(&a) == 1, "hitung halaman, blok, tag");
     KosongkanJurnal(&a);
     cek(a.root != NULL && a.root->firstChild == NULL, "NEW menyisakan P0 kosong");
     cek(a.pageTags == NULL && a.tagPages == NULL, "NEW mengosongkan multilist");
@@ -109,6 +117,38 @@ int main(void){
     cek(CariHalamanJurnal(&a, 1) != NULL, "isi pindah setelah tukar");
     HapusJurnal(&b);
     cek(b.root == NULL, "HapusJurnal mengosongkan root");
+
+    // MuatJurnal (dijalankan dari folder utama repo supaya sample-data ditemukan)
+    {
+        char pesan[Max_Pesan];
+
+        InitJurnal(&b);
+        cek(MuatJurnal(&b, "sample-data/jurnal", pesan, Max_Pesan), "muat sample jurnal");
+        cek(SamaString(pesan, "3 halaman, 3 blok, 2 tag."), "pesan ringkasan sample jurnal");
+        cek(HitungHalaman(&b) == 3 && HitungBlok(&b) == 3 && HitungTag(&b) == 2, "isi sample jurnal");
+        cek(b.nextPageId == 4 && b.nextBlockId == 4 && b.nextTagId == 3 && !b.perubahan, "counter dari workspace.csv");
+        cek(CariHalamanJurnal(&b, 3) != NULL && CariHalamanJurnal(&b, 3)->parent == CariHalamanJurnal(&b, 1), "P3 anak P1");
+        cek(CariPemilikBlok(&b, 3) == CariHalamanJurnal(&b, 3), "B3 milik P3");
+        cek(CariBlok(&CariHalamanJurnal(&b, 3)->blocks, 2)->selesai, "B2 CHECK sudah DONE");
+        cek(b.linkKeluar.length_vertex == 3 && b.linkMasuk.length_vertex == 3, "vertex tiap halaman");
+        HapusJurnal(&b);
+
+        InitJurnal(&b);
+        cek(MuatJurnal(&b, "sample-data/kosong", pesan, Max_Pesan), "muat sample kosong");
+        cek(HitungHalaman(&b) == 0 && HitungBlok(&b) == 0 && HitungTag(&b) == 0, "isi sample kosong");
+        cek(b.nextPageId == 1 && b.nextBlockId == 1 && b.nextTagId == 1, "counter sample kosong");
+        HapusJurnal(&b);
+
+        InitJurnal(&b);
+        cek(!MuatJurnal(&b, "sample-data/rusak", pesan, Max_Pesan), "sample rusak ditolak");
+        cek(SamaString(pesan, "parent P99 pada pages.csv tidak ditemukan."), "pesan parent tidak ditemukan");
+        HapusJurnal(&b);
+
+        InitJurnal(&b);
+        cek(!MuatJurnal(&b, "sample-data/tidak-ada", pesan, Max_Pesan), "folder tidak ada ditolak");
+        cek(SamaString(pesan, "folder tidak ditemukan."), "pesan folder tidak ditemukan");
+        HapusJurnal(&b);
+    }
 
     HapusJurnal(&a);
 
