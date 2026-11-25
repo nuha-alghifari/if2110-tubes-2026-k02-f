@@ -28,6 +28,9 @@ int AmbilIDBlok(Jurnal *j);
 int AmbilIDTag(Jurnal *j);
 void TandaiUbah(Jurnal *j); //dipanggil setiap data diubah
 void TandaiTersimpan(Jurnal *j); //dipanggil setelah save berhasil
+int HitungHalaman(const Jurnal *j); //jumlah halaman, P0 tidak dihitung
+int HitungBlok(const Jurnal *j); //jumlah blok di semua halaman
+int HitungTag(const Jurnal *j); //jumlah tag
 AddressPage CariHalamanJurnal(const Jurnal *j, int id);   //id 0 = P0, NULL jika tidak ada
 AddressPage CariPemilikBlok(const Jurnal *j, int idBlok); //halaman pemilik blok, NULL jika tidak ada
 bool MuatJurnal(Jurnal *tujuan, const char *folder, char *pesan, int pesanMax); //true dan pesan berisi ringkas, false dan pesan berisi alasan

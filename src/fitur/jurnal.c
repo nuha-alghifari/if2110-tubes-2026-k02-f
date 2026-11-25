@@ -120,3 +120,22 @@ static AddressPage CariPemilikRek(AddressPage node, int idBlok){
 AddressPage CariPemilikBlok(const Jurnal *j, int idBlok){
     return CariPemilikRek(j->root, idBlok);
 }
+
+int HitungHalaman(const Jurnal *j){
+    if (j->root == NULL) return 0;
+    return countPages(j->root) - 1;
+}
+
+int HitungBlok(const Jurnal *j){
+    return countBlocks(j->root);
+}
+
+int HitungTag(const Jurnal *j){
+    int n = 0;
+    AddressMultiListTag p = j->tagPages;
+    while (p != NULL){
+        n++;
+        p = p->next;
+    }
+    return n;
+}

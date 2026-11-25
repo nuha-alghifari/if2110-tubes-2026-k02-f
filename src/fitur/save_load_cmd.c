@@ -18,19 +18,19 @@ void CMDLoad(Jurnal *J) {
     if (!MuatJurnal(&jurnalSementara, folder.tab, pesan, Max_Pesan)) {
         printf("Pemuatan gagal: %s\n", pesan);
         printf("Jurnal saat ini tetap digunakan.\n");
-        KosongkanJurnal(&jurnalSementara);
+        HapusJurnal(&jurnalSementara);
         return;
     }
 
     printf("Konfigurasi berhasil dibaca: %s\n", pesan);
     if (TanyaYN("Ganti jurnal saat ini? (Y/N)", &ganti) != InputOK || !ganti) {
         printf("Jurnal saat ini tetap digunakan.\n");
-        KosongkanJurnal(&jurnalSementara);
+        HapusJurnal(&jurnalSementara);
         return;
     }
 
     TukarJurnal(J, &jurnalSementara);
-    KosongkanJurnal(&jurnalSementara);
+    HapusJurnal(&jurnalSementara);
     TandaiTersimpan(J);
     printf("Jurnal berhasil dimuat.\n");
 }

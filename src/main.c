@@ -9,6 +9,6 @@ int main(void){
     if (Inisialisasi(&jurnal)){
         JalankanPerintah(&jurnal);
     }
-    KosongkanJurnal(&jurnal);
+    HapusJurnal(&jurnal);
     return 0;
 }

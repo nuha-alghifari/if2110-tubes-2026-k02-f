@@ -16,7 +16,6 @@ static const Perintah daftar[] = {
     {"QUIT", "keluar dari program", CMDQuit},
     {"LOAD", "memuat jurnal dari folder", CMDLoad},
     {"SAVE", "menyimpan jurnal ke folder", CMDSave},
-    {"PAGEADD", "membuat halaman", CMDPageAdd},
 };
 
 #define JumlahPerintah ((int)(sizeof(daftar) / sizeof(daftar[0])))
