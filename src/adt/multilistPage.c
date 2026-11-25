@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "MultiListPage.h"
+#include "multilistPage.h"
 
 
 void CreateMultiListPage(MultiListPage *l)
@@ -91,6 +91,7 @@ AddressMultiListPage newNodeMLPage(Page x)
     else
     {
         new->info=x;
+        new->next=NULL;
         createListTag(&new->child);
         return new;
     }
@@ -111,13 +112,13 @@ void deleteAtMLPage(MultiListPage *l, Page x)
         if(prec==NULL)
         {
             *l=p->next;
-            deleteAllTag(p->child);
+            deleteAllTag(&p->child);
             free(p); //Apakah ini cukup?
         }
         else
         {
             prec->next=p->next;
-            deleteAllTag(p->child);
+            deleteAllTag(&p->child);
             free(p);
         }
     }

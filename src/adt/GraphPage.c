@@ -15,14 +15,17 @@ Vertex newVertex(Page p)
 
 void insertVertex(Graph *g, Page p)
 {
-    if(g->length_vertex<1000) g->node[g->length_vertex]=newVertex(p);
+    if(g->length_vertex<1000) {
+        g->node[g->length_vertex]=newVertex(p);
+        g->length_vertex++;
+    }
     else
     {
         for(int i=0;i<999;i++)
         {
             g->node[i]=g->node[i+1];
         }
-        deleteAllPage(g->node[999].Edge);
+        deleteAllPage(&g->node[999].Edge);
         g->node[999]=newVertex(p);
     }
 }
