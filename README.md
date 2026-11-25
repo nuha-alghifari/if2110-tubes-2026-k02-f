@@ -73,7 +73,7 @@ Folder `build/` dan `bin/` dibuat otomatis saat kompilasi dan tidak masuk Git.
 | Nama | Tugas | 
 | ---- | --- |
 | *Daniel Putra Rywandi S* | *F05, F08, skeleton Makefile* |
-| *Klio Lysander* | *ADT I/O, ADT Kata + util string, command loop, F01, F10, README* |
+| *Klio Lysander* | *ADT I/O, ADT Kata, command loop, F01, F10, README* |
 | *Mochammad Nuha Al Ghifari* | *F09, parser CSV, validasi file rusak, sample-data rusak buat tes* |
 | *Kelvin Sebastian Yen* | *F02, F03, F04* |
 | *Kevin Lincoln Hutabarat* | *F06, F07* |
