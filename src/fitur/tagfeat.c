@@ -5,7 +5,7 @@ void initTag()
 	CreateMultiListPage(&pagetag);
 	for (int i = 0; i < LENGTHPAGE; i++)
 		insertLastMLPage(&pagetag, 1);
-	createMultiListTag(&tagpage);
+	CreateMultiListTag(&tagpage);
 }
 
 void tagAdd()

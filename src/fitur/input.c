@@ -14,9 +14,9 @@ bool InputHabis(void){
 static StatusInput Baca(const char *pertanyaan, Kata *hasil){
     StatusBaca s;
     if (pertanyaan != NULL){
-        printf("%s", pertanyaan);
+        printf("%s ", pertanyaan);
     }
-    printf(">>>");
+    printf(">>> ");
     fflush(stdout);
 
     if(!sudahStart){

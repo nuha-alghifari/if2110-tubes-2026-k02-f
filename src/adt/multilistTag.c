@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "MultiListTag.h"
+#include "multilistTag.h"
 
 
 void CreateMultiListTag(MultiListTag *l)
@@ -91,6 +91,7 @@ AddressMultiListTag newNodeMLTag(Tag x)
     else
     {
         new->info=x;
+        new->next=NULL;
         createListPage(&new->child);
         return new;
     }
@@ -111,13 +112,13 @@ void deleteAtMLTag(MultiListTag *l, Tag x)
         if(prec==NULL)
         {
             *l=p->next;
-            deleteAllPage(p->child);
+            deleteAllPage(&p->child);
             free(p); //Apakah ini cukup?
         }
         else
         {
             prec->next=p->next;
-            deleteAllPage(p->child);
+            deleteAllPage(&p->child);
             free(p);
         }
     }

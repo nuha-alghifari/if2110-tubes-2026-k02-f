@@ -1,8 +1,9 @@
-#include "LinkedlistTag.h"
+#include "linkedlistTag.h"
+#include <stdio.h>
 
 void createListTag(LinkedlistTag *l)
 {
-    *l==NULL;
+    *l = NULL;
 }
 int lengthListTag(LinkedlistTag l)
 {
@@ -26,6 +27,7 @@ AddresslistTag newNodeTag(ElListTag x)
     else
     {
         new->info=x;
+        new->next=NULL;
         return new;
     }
 }

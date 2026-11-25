@@ -11,7 +11,7 @@ typedef struct tag
 	int id;
 } Tag;
 
-int idcounter=1;
+extern int idcounter;
 
 bool isTagValid(Tag t);
 Tag addNewTag();

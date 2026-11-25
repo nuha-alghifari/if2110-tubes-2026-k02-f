@@ -59,6 +59,14 @@ int main (void){
     KataDariC(&b, "Hello World Cup");
     cek(!KataMengandung(&a, &b), "lebih panjang dari teks");
 
+    KataDariC(&a, "HeLp");
+    cek(KataSamaCTanpaKapital(&a, "HELP"), "sama tanpa kapital");
+    cek(KataSamaCTanpaKapital(&a, "help"), "sama tanpa kapital kecil");
+    cek(!KataSamaCTanpaKapital(&a, "HELPS"), "tanpa kapital b lebih panjang");
+    cek(!KataSamaCTanpaKapital(&a, "HEL"), "tanpa kapital b lebih pendek");
+    KosongKata(&a);
+    cek(KataSamaCTanpaKapital(&a, ""), "tanpa kapital kosong sama kosong");
+
     cek(keInt("12", &n) && n == 12, " int 12");
     cek(keInt("-3", &n) && n == -3, "int -3");
     cek(keInt("0", &n) && n == 0, "int 0");

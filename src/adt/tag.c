@@ -1,7 +1,9 @@
 #include "stdio.h"
-#include "Tag.h"
+#include "tag.h"
 #include "mesin_karakter.h"
 #include <stdlib.h>
+
+int idcounter = 1;
 bool isTagValid(Tag t)
 {
 	bool valid;
@@ -42,6 +44,7 @@ Tag copyKata(Kata k)
 	}
 	t.kata[k.length]='\0';
 	t.length=k.length;
+	return t;
 }
 
 bool isTagSama(Tag t1, Tag t2)
@@ -51,7 +54,7 @@ bool isTagSama(Tag t1, Tag t2)
         bool sama=true;
         for(int i=0;i<t1.length;i++)
         {
-            if(t1.kata[i]!=t2.kata)
+            if(t1.kata[i]!=t2.kata[i]) 
             {
                 sama=false;
                 break;

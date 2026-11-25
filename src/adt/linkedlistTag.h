@@ -1,5 +1,5 @@
-#ifndef LinkedlistTagTAG_H
-#define LINDKEDLISTTAG_H
+#ifndef LINKEDLISTTAG_H
+#define LINKEDLISTTAG_H
 #include "tag.h"
 #include <stdlib.h>
 #define ElListTag Tag
