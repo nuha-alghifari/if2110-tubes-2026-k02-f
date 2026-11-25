@@ -1,4 +1,5 @@
 #include "linkbacklink.h"
+#include <stdio.h>
 
 void initLink()
 {
@@ -15,7 +16,7 @@ void link()
 {
     int idp1, idp2;
     int i1,i2;
-    StatusInput s1=TanyaID("Masukkan ID halaman sumber:",'P',idp1);
+    StatusInput s1=TanyaID("Masukkan ID halaman sumber:",'P', &idp1);
     if(s1==InputOK)
     {
         i1=SearchVertexIdx(LinkToPages,idp1);
