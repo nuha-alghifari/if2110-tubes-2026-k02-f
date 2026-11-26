@@ -235,9 +235,9 @@ static bool MuatPages(Jurnal *j, Mem *mem, const char *folder, char *pesan, int 
         }
     }
 
-    for (i = 0; i < mem->jumlahPage; i++){
-        id = mem->urutan[i];
+    for (id = 1; id < mem->nPage; id++){
         node = mem->byId[id];
+        if (node == NULL) continue;
         ind = mem->induk[id];
         parentNode = (ind == 0) ? j->root : mem->byId[ind];
         node->parent = parentNode;

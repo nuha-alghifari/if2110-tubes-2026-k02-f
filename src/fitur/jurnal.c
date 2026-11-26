@@ -5,7 +5,7 @@
 static AddressPage BuatRoot(void){
     Kata id, judul;
     KataDariC(&id, "P0");
-    KosongKata(&judul);
+    KataDariC(&judul, "Workspace");
     return createPage(id, judul);
 }
 
