@@ -13,6 +13,9 @@ bool InputHabis(void){
 
 static StatusInput Baca(const char *pertanyaan, Kata *hasil){
     StatusBaca s;
+    if (habis){
+        return InputEOF;
+    }
     if (pertanyaan != NULL){
         printf("%s ", pertanyaan);
     }
