@@ -1,6 +1,6 @@
 #include "stdio.h"
 #include "tag.h"
-#include "mesin_karakter.h"
+#include "../io/mesin_kata.h"
 #include <stdlib.h>
 
 bool isTagValid(Tag t)
