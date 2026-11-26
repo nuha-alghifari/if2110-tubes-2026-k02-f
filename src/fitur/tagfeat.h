@@ -1,18 +1,15 @@
 #ifndef TAGFEAT_H
 #define TAGFEAT_H
-#define LENGTHPAGE 10 //Sembarang, perlu diubah nanti
-#include "multilistPage.h"
-#include "multilistTag.h"
-#include "input.h"
 #include "jurnal.h"
 
-void tagAdd(Jurnal *j);
-void tag(Jurnal *j);
-void untag(Jurnal *j);
-void tagdelete(Jurnal *j);
-void taglist(Jurnal *j);
-void pagetags(Jurnal *j);
-void tagpages(Jurnal *j);
-bool isAlreadyTagged(AddressMultiListPage p, AddressMultiListTag mt);
+void CMDTagAdd(Jurnal *J);
+void CMDTagDelete(Jurnal *J);
+void CMDTagList(Jurnal *J);
+void CMDTag(Jurnal *J);
+void CMDUntag(Jurnal *J);
+void CMDPageTags(Jurnal *J);
+void CMDTagPages(Jurnal *J);
+void TagTambahHalaman(Jurnal *J, int idHalaman);
+void TagHapusHalaman(Jurnal *J, int idHalaman);
 
 #endif

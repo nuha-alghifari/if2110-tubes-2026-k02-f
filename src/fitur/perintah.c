@@ -5,6 +5,8 @@
 #include "save_load_cmd.h"
 #include "block_cmd.h"
 #include "pencarian.h"
+#include "tagfeat.h"
+#include "linkbacklink.h"
 
 typedef struct {
     const char *nama;
@@ -25,6 +27,17 @@ static const Perintah daftar[] = {
     {"CHECK", "mengubah status checklist", CMDCheck},
     {"SEARCH", "mencari halaman", CMDSearch},
     {"PAGES", "menampilkan halaman terurut", CMDPages},
+    {"TAGADD", "membuat tag baru", CMDTagAdd},
+    {"TAGDELETE", "menghapus tag dari katalog", CMDTagDelete},
+    {"TAGLIST", "menampilkan katalog tag", CMDTagList},
+    {"TAG", "memasang tag pada halaman", CMDTag},
+    {"UNTAG", "melepas tag dari halaman", CMDUntag},
+    {"PAGETAGS", "menampilkan tag suatu halaman", CMDPageTags},
+    {"TAGPAGES", "menampilkan halaman pemakai tag", CMDTagPages},
+    {"LINK", "menautkan halaman sumber ke tujuan", CMDLink},
+    {"UNLINK", "menghapus link antar halaman", CMDUnlink},
+    {"LINKS", "menampilkan halaman yang dirujuk", CMDLinks},
+    {"BACKLINKS", "menampilkan halaman yang merujuk", CMDBacklinks},
 };
 
 #define JumlahPerintah ((int)(sizeof(daftar) / sizeof(daftar[0])))

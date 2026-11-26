@@ -2,10 +2,11 @@
 #define MultiListPage_H
 #include "linkedlistTag.h"
 #include "linkedlistPage.h"
+#define Page int //masih temporary
 
 typedef struct nodemlPage* AddressMultiListPage;
 typedef struct nodemlPage{
-	Paget info;
+	Page info;
 	LinkedlistTag child;
 	AddressMultiListPage next;
 } NodemlPage;
@@ -13,13 +14,12 @@ typedef AddressMultiListPage MultiListPage;
 
 
 void CreateMultiListPage(MultiListPage *l);
-void insertLastMLPage(MultiListPage *l, Paget x);
-void insertLinkedListPage(MultiListPage *l, Paget x, Tag y);
-void deleteLinkedListPage(MultiListPage *l, Paget x, Tag y);
-AddressMultiListPage searchMLPage(MultiListPage l, Paget x);
-AddressMultiListPage newNodeMLPage(Paget x);
-void deleteAtMLPage(MultiListPage *l, Paget x);
+void insertLastMLPage(MultiListPage *l, Page x);
+void insertLinkedListPage(MultiListPage *l, Page x, Tag y);
+void deleteLinkedListPage(MultiListPage *l, Page x, Tag y);
+AddressMultiListPage searchMLPage(MultiListPage l, Page x);
+AddressMultiListPage newNodeMLPage(Page x);
+void deleteAtMLPage(MultiListPage *l, Page x);
 AddressMultiListPage searchMLPageByID(MultiListPage l, int id);
-void geserPageML(MultiListPage *l);
 
 #endif
