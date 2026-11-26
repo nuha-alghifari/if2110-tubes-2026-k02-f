@@ -3,6 +3,7 @@
 #include "handler.h"
 #include "input.h"
 #include "save_load_cmd.h"
+#include "page_cmd.h"
 #include "block_cmd.h"
 #include "pencarian.h"
 #include "tagfeat.h"
@@ -20,6 +21,14 @@ static const Perintah daftar[] = {
     {"QUIT", "keluar dari program", CMDQuit},
     {"LOAD", "memuat jurnal dari folder", CMDLoad},
     {"SAVE", "menyimpan jurnal ke folder", CMDSave},
+    {"PAGEADD", "membuat halaman baru", CMDPageAdd},
+    {"PAGETITLE", "mengubah judul halaman", CMDPageTitle},
+    {"PAGEVIEW", "melihat isi halaman", CMDPageView},
+    {"TREE", "menampilkan hierarki halaman", CMDTree},
+    {"PATH", "menampilkan lokasi halaman", CMDPath},
+    {"PAGESTATS", "menampilkan ringkasan halaman", CMDPageStats},
+    {"PAGEMOVE", "memindahkan halaman", CMDPageMove},
+    {"PAGEDELETE", "menghapus halaman beserta subhalaman", CMDPageDelete},
     {"BLOCKADD", "menambah blok", CMDBlockAdd},
     {"BLOCKEDIT", "mengubah teks blok", CMDBlockEdit},
     {"BLOCKMOVE", "memindahkan blok", CMDBlockMove},
