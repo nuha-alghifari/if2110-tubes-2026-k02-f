@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include "jurnal.h"
 #include "tree.h"
 #include "page.h"
 #include "kata.h"
 #include "block_cmd.h"
-#include "jurnal.h"
 #include "tagfeat.h"
 #include "linkbacklink.h"
 
@@ -135,7 +135,9 @@ void PageView(AddressPage root, Kata targetId){
     printLokasi(target);
     printf("\n");
 
-    printf("Tag: \n"); // menunggu implementasi tag
+    printf("Tag: "); 
+    printPageTags(getPageId(target->pageId));
+    printf("\n");
 
     printf("Blok: \n");
     CetakDaftarBlok(&target->blocks);
@@ -178,7 +180,7 @@ void PageStats(AddressPage root, Kata targetId){
     }
     printf("Halaman: %d\n", countPages(target));
     printf("Blok: %d\n", countBlocks(target));
-    printf("Checklist: (TBA)\n"); //TBA abis implementasi fiturnya don
+    printf("Checklist: %d; selesai: %d\n", countChecklists(target), countChecklistsDone(target)); 
     printf("Kedalaman: %d\n", getDepth(target));
 }
 
