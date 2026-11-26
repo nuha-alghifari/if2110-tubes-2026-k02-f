@@ -27,4 +27,7 @@ bool isSubtree(AddressPage parent, AddressPage target);
 void printTree(AddressPage root, int level);
 void deleteSubtree(AddressPage root);
 int countBlocks(AddressPage target);
+int countChecklists(AddressPage target);
+int countChecklistsDone(AddressPage target);
+
 #endif

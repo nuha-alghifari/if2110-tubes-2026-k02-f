@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include "jurnal.h"
 #include "tree.h"
 #include "page.h"
 #include "kata.h"
 #include "block_cmd.h"
-#include "jurnal.h"
 #include "tagfeat.h"
 #include "linkbacklink.h"
+#include "multilistPage.h"
+#include "linkedlistTag.h"
+#include "tag.h"
 
 // ambil angka ID
 static int getPageId(Kata id) {
@@ -28,6 +31,23 @@ static void lepasRelasi(Jurnal *J, AddressPage node) {
     LinkHapusHalaman(J, num);
     lepasRelasi(J, node->firstChild);
     lepasRelasi(J, node->nextSibling);
+}
+
+static void printPageTags(Jurnal *J, int pageNum){
+    AddressMultiListPage p = searchMLPageByID(J->pageTags, pageNum);
+    if (p == NULL || p->child == NULL){
+        printf("(kosong)\n");
+        return;
+    }
+
+    AddresslistTag t = p->child;
+    while (t != NULL){
+        printf("%s", t->info.kata);
+        if (t->next != NULL){
+            printf(", ");
+        }
+        t = t->next;
+    }
 }
 
 bool PageAdd(Jurnal *J, Kata parentId, Kata title){
@@ -118,7 +138,8 @@ static void printDaftarSubHalaman(AddressPage child){
     printDaftarSubHalaman(child->nextSibling);
 }
 
-void PageView(AddressPage root, Kata targetId){
+void PageView(Jurnal *J, Kata targetId){
+    AddressPage root = J->root;
     AddressPage target = findPage(root, targetId);
     if (target == NULL){
         printf("Halaman %s tidak dapat ditemukan.\n", targetId.tab);
@@ -135,7 +156,9 @@ void PageView(AddressPage root, Kata targetId){
     printLokasi(target);
     printf("\n");
 
-    printf("Tag: \n"); // menunggu implementasi tag
+    printf("Tag: "); 
+    printPageTags(J, getPageId(target->pageId));
+    printf("\n");
 
     printf("Blok: \n");
     CetakDaftarBlok(&target->blocks);
@@ -178,7 +201,7 @@ void PageStats(AddressPage root, Kata targetId){
     }
     printf("Halaman: %d\n", countPages(target));
     printf("Blok: %d\n", countBlocks(target));
-    printf("Checklist: (TBA)\n"); //TBA abis implementasi fiturnya don
+    printf("Checklist: %d; selesai: %d\n", countChecklists(target), countChecklistsDone(target)); 
     printf("Kedalaman: %d\n", getDepth(target));
 }
 
@@ -189,7 +212,7 @@ bool PageMove(AddressPage root, Kata targetId, Kata parentId){
         return false;
     }
     if (target == root || target->parent == NULL){
-        printf("Root tidak bisa dipindah.");
+        printf("Root tidak bisa dipindah.\n");
         return false;
     }
     AddressPage newParent = findPage(root, parentId);
@@ -198,11 +221,11 @@ bool PageMove(AddressPage root, Kata targetId, Kata parentId){
         return false;
     }
     if (target == newParent){
-        printf("Parent baru tidak boleh sama dengan halaman.");
+        printf("Parent baru tidak boleh sama dengan halaman.\n");
         return false;
     }
     if (isSubtree(target, newParent)){
-        printf("Subtree dari halaman tidak boleh menjadi parent dari halaman tersebut.");
+        printf("Subtree dari halaman tidak boleh menjadi parent dari halaman tersebut.\n");
         return false;
     }
 
@@ -275,8 +298,8 @@ void perintahPageTitle(AddressPage root, Kata targetId, Kata newTitle){
     PageTitle(root, targetId, newTitle);
 }
 
-void perintahPageView(AddressPage root, Kata targetId){
-    PageView(root, targetId);
+void perintahPageView(Jurnal *J, Kata targetId){
+    PageView(J, targetId);
 }
 
 void perintahTree(AddressPage root, Kata targetId){

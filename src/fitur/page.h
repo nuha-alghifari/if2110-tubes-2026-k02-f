@@ -7,10 +7,10 @@
 
 void perintahPageAdd(Jurnal *J, Kata parentId, Kata title);
 void perintahPageTitle(AddressPage root, Kata targetId, Kata newTitle);
-void perintahPageView(AddressPage root, Kata targetId);
+void perintahPageView(Jurnal *J, Kata targetId);
 bool PageAdd(Jurnal *J, Kata parentId, Kata title);
 bool PageTitle(AddressPage root, Kata pageId, Kata newTitle);
-void PageView(AddressPage root, Kata targetId);
+void PageView(Jurnal *J, Kata targetId);
 void Tree(AddressPage root, Kata targetId);                
 void Path(AddressPage root, Kata targetId);               
 void PageStats(AddressPage root, Kata targetId);           

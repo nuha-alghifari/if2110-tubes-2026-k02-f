@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tree.h"
+#include "block.h"
 
     // char pageId[16];
     // char title[128];
@@ -160,6 +161,7 @@ static void printForest(AddressPage node, int level){
     printForest(node->firstChild, level + 1);
     printForest(node->nextSibling, level);
 }
+
 void printTree(AddressPage node, int level){
     if (node == NULL){
         return;
@@ -201,6 +203,33 @@ void deleteSubtree(AddressPage root){
     deallocatePage(root);
 }
 
+static int countForestChecklists(AddressPage node){
+    if (node == NULL){
+        return 0;
+    }
+    return JumlahChecklist(&node->blocks) + countForestChecklists(node->firstChild) + countForestChecklists(node->nextSibling);
+}
+
+int countChecklists(AddressPage target){
+    if (target == NULL){
+        return 0;
+    }
+    return JumlahChecklist(&target->blocks) + countForestChecklists(target->firstChild);
+}
+
+static int countForestChecklistsDone(AddressPage node){
+    if (node == NULL){
+        return 0;
+    }
+    return JumlahChecklistSelesai(&node->blocks) + countForestChecklistsDone(node->firstChild) + countForestChecklistsDone(node->nextSibling);
+}
+
+int countChecklistsDone(AddressPage target){
+    if (target == NULL){
+        return 0;
+    }
+    return JumlahChecklistSelesai(&target->blocks) + countForestChecklistsDone(target->firstChild);
+}
 
 
 

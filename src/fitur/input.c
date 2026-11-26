@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "input.h"
-#include "mesin_kata.h"
+#include "../io/mesin_kata.h"
 
 static MesinKarakter mesin;
 static bool sudahStart = false; //mesin distart saat masukan pertama dibaca
