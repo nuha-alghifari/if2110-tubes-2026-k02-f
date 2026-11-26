@@ -21,7 +21,7 @@ AddresslistPage newNodePage(ElListPage x)
     AddresslistPage new= (AddresslistPage) malloc(sizeof(Nodepage));
     if(new==NULL)
     {
-        printf("Alokasi gagal!\n"); //idk if this is allowed
+        printf("Alokasi gagal!\n"); 
         return NULL;
     }
     else
@@ -48,7 +48,7 @@ void insertSortedPage(LinkedlistPage *l, ElListPage x)
             bool found=false;
             while((p!=NULL) && (!found))
             {
-                if(isBeforePage(x,p->info)) //Masih temp, perlu diganti
+                if(isBeforePage(x,p->info))
                 {
                     found=true;
                 }
@@ -81,7 +81,7 @@ AddresslistPage searchPage(LinkedlistPage l, ElListPage x)
     bool found=false;
     while((p!=NULL) && (!found))
     {
-        if(p->info==x) found=true; //Perlu diubah
+        if(KataSama(&p->info.title,&x.title)) found=true; 
         else p=p->next;
     }
     if(found) return p;
@@ -127,11 +127,13 @@ void deleteAtPage(LinkedlistPage *l, ElListPage x)
         {
             *l=p->next;
             free(p);
+            geserPage(l);
         }
         else
         {
             prec->next=p->next;
             free(p);
+            geserPage(&prec->next);
         }
     }
 }
@@ -149,9 +151,34 @@ void deleteAllPage(LinkedlistPage *l)
     *l=NULL;
 }
 
-bool isBeforePage(Page p1, Page p2) //Perlu diganti
+bool isBeforePage(Paget p1, Paget p2)
 {
-    if(p1<p2) return true;
+    int id1,id2;
+    KataKeID(&p1.pageid,'P',&id1);
+    KataKeID(&p2.pageid,'P',&id2);
+    if(id1<id2) return true;
     else return false;
 }
 
+bool isIDEqualPt(Paget p1, int id)
+{
+    int id1;
+    KataKeID(&p1.pageid,'P',&id1);
+    if(id1==id) return true;
+    else return false;
+}
+
+void geserPage(LinkedlistPage *l)
+{
+    AddresslistPage p=*l;
+    int id;
+    char buf[16];
+    while(p!=NULL)
+    {
+        KataKeID(&p->info.pageid,'P',&id);
+        id--;
+        sprintf(buf, "P%d", id);
+        KataDariC(&p->info.pageid,buf);
+        p=p->next;
+    }
+}

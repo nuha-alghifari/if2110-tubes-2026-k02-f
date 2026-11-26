@@ -27,7 +27,7 @@ void insertLastMLTag(MultiListTag *l, Tag x)
         }
     }
 }
-void insertLinkedListTag(MultiListTag *l, Tag x, Page y)
+void insertLinkedListTag(MultiListTag *l, Tag x, Paget y)
 {
     AddressMultiListTag cari=searchMLTag(*l,x);
     if(cari!=NULL)
@@ -40,7 +40,7 @@ void insertLinkedListTag(MultiListTag *l, Tag x, Page y)
         insertSortedPage(&p->child,y);
     }
 }
-void deleteLinkedListTag(MultiListTag *l, Tag x, Page y)
+void deleteLinkedListTag(MultiListTag *l, Tag x, Paget y)
 {
     AddressMultiListTag cari=searchMLTag(*l,x);
     if(cari!=NULL)
@@ -113,13 +113,25 @@ void deleteAtMLTag(MultiListTag *l, Tag x)
         {
             *l=p->next;
             deleteAllPage(&p->child);
-            free(p); //Apakah ini cukup?
+            free(p); 
+            geserTagML(l);
         }
         else
         {
             prec->next=p->next;
             deleteAllPage(&p->child);
             free(p);
+            geserTagML(&prec->next);
         }
+    }
+}
+
+void geserTagML(MultiListTag *l)
+{
+    AddressMultiListTag p=*l;
+    while(p!=NULL)
+    {
+        p->info.id--;
+        p=p->next;
     }
 }

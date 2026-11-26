@@ -6,7 +6,7 @@ void CreateMultiListPage(MultiListPage *l)
 {
     *l=NULL;
 }
-void insertLastMLPage(MultiListPage *l, Page x)
+void insertLastMLPage(MultiListPage *l, Paget x)
 {
     AddressMultiListPage new=newNodeMLPage(x);
     if(new!=NULL)
@@ -18,7 +18,6 @@ void insertLastMLPage(MultiListPage *l, Page x)
         else
         {
             AddressMultiListPage p=*l;
-            //AddressMultiListPage prec=NULL;
             while(p->next!=NULL)
             {
                 p=p->next;
@@ -27,7 +26,7 @@ void insertLastMLPage(MultiListPage *l, Page x)
         }
     }
 }
-void insertLinkedListPage(MultiListPage *l, Page x, Tag y)
+void insertLinkedListPage(MultiListPage *l, Paget x, Tag y)
 {
     AddressMultiListPage cari=searchMLPage(*l,x);
     if(cari!=NULL)
@@ -40,7 +39,7 @@ void insertLinkedListPage(MultiListPage *l, Page x, Tag y)
         insertSortedTag(&p->child,y);
     }
 }
-void deleteLinkedListPage(MultiListPage *l, Page x, Tag y)
+void deleteLinkedListPage(MultiListPage *l, Paget x, Tag y)
 {
     AddressMultiListPage cari=searchMLPage(*l,x);
     if(cari!=NULL)
@@ -54,13 +53,13 @@ void deleteLinkedListPage(MultiListPage *l, Page x, Tag y)
     }
 }
 
-AddressMultiListPage searchMLPage(MultiListPage l, Page x)
+AddressMultiListPage searchMLPage(MultiListPage l, Paget x)
 {
     AddressMultiListPage p=l;
     bool found=false;
     while((p!=NULL) && (!found))
     {
-        if(p->info==x) found=true; //Perlu diubah
+        if(KataSama(&p->info.title,&x.title)) found=true; //Perlu diubah
         else p=p->next;
     }
     if(found) return p;
@@ -73,14 +72,14 @@ AddressMultiListPage searchMLPageByID(MultiListPage l, int id)
     bool found=false;
     while((p!=NULL) && (!found))
     {
-        if(p->info==id) found=true; //Perlu diubah
+        if(isIDEqualPt(p->info,id)) found=true; //Perlu diubah
         else p=p->next;
     }
     if(found) return p;
     else return NULL;
 }
 
-AddressMultiListPage newNodeMLPage(Page x)
+AddressMultiListPage newNodeMLPage(Paget x)
 {
     AddressMultiListPage new= (AddressMultiListPage) malloc(sizeof(NodemlPage));
     if(new==NULL)
@@ -97,7 +96,7 @@ AddressMultiListPage newNodeMLPage(Page x)
     }
 }
 
-void deleteAtMLPage(MultiListPage *l, Page x)
+void deleteAtMLPage(MultiListPage *l, Paget x)
 {
     AddressMultiListPage p= *l;
     AddressMultiListPage cari= searchMLPage(*l,x);
@@ -113,13 +112,30 @@ void deleteAtMLPage(MultiListPage *l, Page x)
         {
             *l=p->next;
             deleteAllTag(&p->child);
-            free(p); //Apakah ini cukup?
+            free(p);
+            geserPageML(l);
         }
         else
         {
             prec->next=p->next;
             deleteAllTag(&p->child);
             free(p);
+            geserPageML(&prec->next);
         }
+    }
+}
+
+void geserPageML(MultiListPage *l)
+{
+    AddressMultiListPage p=*l;
+    int id;
+    char buf[16];
+    while(p!=NULL)
+    {
+        KataKeID(&p->info.pageid,'P',&id);
+        id--;
+        sprintf(buf, "P%d", id);
+        KataDariC(&p->info.pageid,buf);
+        p=p->next;
     }
 }

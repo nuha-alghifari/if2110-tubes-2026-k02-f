@@ -5,7 +5,7 @@ void createGraph(Graph *g)
     g->length_vertex=0;
 }
 
-Vertex newVertex(Page p)
+Vertex newVertex(Paget p)
 {
     Vertex v;
     v.info=p;
@@ -13,7 +13,7 @@ Vertex newVertex(Page p)
     return v;
 }
 
-void insertVertex(Graph *g, Page p)
+void insertVertex(Graph *g, Paget p)
 {
     if(g->length_vertex<1000) {
         g->node[g->length_vertex]=newVertex(p);
@@ -30,12 +30,12 @@ void insertVertex(Graph *g, Page p)
     }
 }
 
-int SearchVertexIdx(Graph g, Page p)
+int SearchVertexIdx(Graph g, Paget p)
 {
     int id=INVALID_IDX;
     for(int i=0;i<g.length_vertex;i++)
     {
-        if(g.node[i].info==p) 
+        if(KataSama(&g.node[i].info.title,&p.title)) 
         {
             id=i;
             break;
@@ -44,7 +44,21 @@ int SearchVertexIdx(Graph g, Page p)
     return id;
 }
 
-void addEdge(Graph *g, Page from, Page to)
+int SearchVertexIdxByID(Graph g, int idp)
+{
+    int id=INVALID_IDX;
+    for(int i=0;i<g.length_vertex;i++)
+    {
+        if(isIDEqualPt(g.node[i].info,idp)) 
+        {
+            id=i;
+            break;
+        }
+    }
+    return id;
+}
+
+void addEdge(Graph *g, Paget from, Paget to)
 {
     int id1=SearchVertexIdx(*g,from);
     int id2=SearchVertexIdx(*g,to);
@@ -54,7 +68,7 @@ void addEdge(Graph *g, Page from, Page to)
     }
 }
 
-void deleteEdge(Graph *g, Page from, Page to)
+void deleteEdge(Graph *g, Paget from, Paget to)
 {
     int id1=SearchVertexIdx(*g,from);
     int id2=SearchVertexIdx(*g,to);
