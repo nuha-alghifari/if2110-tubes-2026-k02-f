@@ -6,7 +6,7 @@
 
 typedef struct tag
 {
-	char kata[1024];
+	char kata[Max_Kata + 1];
 	int length;
 	int id;
 } Tag;
