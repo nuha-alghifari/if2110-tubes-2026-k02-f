@@ -2,14 +2,11 @@
 #define LINKBACKLINK_H
 #include "GraphPage.h"
 #include "input.h"
+#include "jurnal.h"
 
-Graph LinkToPages;
-Graph LinkFromPages;
-
-void initLink();
-void link();
-void unlink();
-void links();
-void backlinks();
+void link(Jurnal *j);
+void unlink(Jurnal *j);
+void links(Jurnal *j);
+void backlinks(Jurnal *j);
 
 #endif

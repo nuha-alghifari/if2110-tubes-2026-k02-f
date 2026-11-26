@@ -3,7 +3,6 @@
 #include "mesin_karakter.h"
 #include <stdlib.h>
 
-int idcounter = 1;
 bool isTagValid(Tag t)
 {
 	bool valid;
@@ -26,18 +25,18 @@ bool isTagValid(Tag t)
 	}
 	return valid;
 }
-Tag createNewTag()
+Tag createNewTag(int *id)
 {
 	Tag t;
 	t.length=0;
-	t.id=idcounter;
-	idcounter++;
+	t.id=*id;
+	*id=*id+1;
 	return t;
 }
 
-Tag copyKata(Kata k)
+Tag copyKata(Kata k, int *id)
 {
-	Tag t=createNewTag();
+	Tag t=createNewTag(id);
 	for(int i=0;i<k.length;i++)
 	{
 		t.kata[i]=k.tab[i];
@@ -94,4 +93,3 @@ bool isBeforeTag(Tag t1, Tag t2)
 		else return false;
 	}
 }
-

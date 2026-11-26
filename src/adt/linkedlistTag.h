@@ -19,5 +19,6 @@ AddresslistTag searchTag(LinkedlistTag l, ElListTag x);
 void deleteLastTag(LinkedlistTag *l);
 void deleteAtTag(LinkedlistTag *l, ElListTag x);
 void deleteAllTag(LinkedlistTag *l);
+void geserTag(LinkedlistTag *l);
 
 #endif

@@ -2,12 +2,16 @@
 #define LINDKEDLISTPAGE_H
 //#include "page.h"
 //#include "tag.h"
-#define Page int
-#define ElListPage Page // Masih temporary
 #include <stdbool.h>
 #include <stdlib.h>
+#include "kata.h"
 
-//typedef int ElListPage;// Masih temporary
+typedef struct paget{
+    Kata title;
+    Kata pageid;
+} Paget;
+
+typedef Paget ElListPage;
 
 typedef struct nodepage* AddresslistPage;
 typedef struct nodepage{
@@ -24,6 +28,8 @@ AddresslistPage searchPage(LinkedlistPage l, ElListPage x);
 void deleteLastPage(LinkedlistPage *l);
 void deleteAtPage(LinkedlistPage *l, ElListPage x);
 void deleteAllPage(LinkedlistPage *l);
-bool isBeforePage(Page p1, Page p2);
+bool isBeforePage(Paget p1, Paget p2);
+bool isIDEqualPt(Paget p1, int id);
+void geserPage(LinkedlistPage *l);
 
 #endif
