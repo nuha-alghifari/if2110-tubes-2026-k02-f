@@ -38,6 +38,7 @@ void CMDLoad(Jurnal *J) {
 void CMDSave(Jurnal *J) {
     Kata folder;
     struct stat info;
+    char pesan[Max_Pesan];
 
     if (Tanya("Masukkan folder penyimpanan:", &folder) != InputOK || folder.length == 0) {
         return;
@@ -48,8 +49,17 @@ void CMDSave(Jurnal *J) {
         #ifdef _WIN32
             mkdir(folder.tab);
         #else
-            mkdir(folder.tab, 0777); 
+            mkdir(folder.tab, 0777);
         #endif
+        if (stat(folder.tab, &info) != 0 || !S_ISDIR(info.st_mode)) {
+            printf("Penyimpanan gagal: folder tidak dapat dibuat (pastikan parent directory sudah ada).\n");
+            return;
+        }
+    }
+
+    if (!SimpanJurnal(J, folder.tab, pesan, Max_Pesan)) {
+        printf("Penyimpanan gagal: %s\n", pesan);
+        return;
     }
 
     TandaiTersimpan(J);
