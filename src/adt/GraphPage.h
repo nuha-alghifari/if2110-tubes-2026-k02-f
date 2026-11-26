@@ -5,7 +5,7 @@
 
 // Implementasi dengan adjacency list
 typedef struct vertex{
-    Paget info;
+    Page info;
     LinkedlistPage Edge;
 } Vertex;
 
@@ -15,11 +15,10 @@ typedef struct graph{
 } Graph;
 
 void createGraph(Graph *g);
-Vertex newVertex(Paget p);
-void insertVertex(Graph *g, Paget p);
-int SearchVertexIdx(Graph g, Paget p);
-int SearchVertexIdxByID(Graph g, int idp);
-void addEdge(Graph *g, Paget from, Paget to);
-void deleteEdge(Graph *g, Paget from, Paget to);
+Vertex newVertex(Page p);
+void insertVertex(Graph *g, Page p);
+int SearchVertexIdx(Graph g, Page p);
+void addEdge(Graph *g, Page from, Page to);
+void deleteEdge(Graph *g, Page from, Page to);
 
 #endif

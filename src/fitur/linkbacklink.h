@@ -4,9 +4,10 @@
 #include "input.h"
 #include "jurnal.h"
 
-void link(Jurnal *j);
-void unlink(Jurnal *j);
-void links(Jurnal *j);
-void backlinks(Jurnal *j);
+void CMDLink(Jurnal *j);
+void CMDUnlink(Jurnal *j);
+void CMDLinks(Jurnal *j);
+void CMDBacklinks(Jurnal *j);
+void LinkHapusHalaman(Jurnal *j, int idHalaman);
 
 #endif

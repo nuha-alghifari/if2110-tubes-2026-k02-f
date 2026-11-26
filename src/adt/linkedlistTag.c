@@ -127,13 +127,11 @@ void deleteAtTag(LinkedlistTag *l, ElListTag x)
         {
             *l=p->next;
             free(p);
-            geserTag(l);
         }
         else
         {
             prec->next=p->next;
             free(p);
-            geserTag(&prec->next);
         }
     }
 }
@@ -151,12 +149,3 @@ void deleteAllTag(LinkedlistTag *l)
     *l=NULL;
 }
 
-void geserTag(LinkedlistTag *l)
-{
-    AddresslistTag p=*l;
-    while(p!=NULL)
-    {
-        p->info.id--;
-        p=p->next;
-    }
-}
