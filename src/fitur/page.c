@@ -36,7 +36,7 @@ static void lepasRelasi(Jurnal *J, AddressPage node) {
 static void printPageTags(Jurnal *J, int pageNum){
     AddressMultiListPage p = searchMLPageByID(J->pageTags, pageNum);
     if (p == NULL || p->child == NULL){
-        printf("(kosong)\n");
+        printf("(kosong)");
         return;
     }
 
@@ -111,6 +111,17 @@ static void printLokasi(AddressPage node){
     printf("%s", node->title.tab);
 }
 
+
+static void printJalur(AddressPage node){
+    if (node == NULL){
+        return;
+    }
+    if (node->parent != NULL){
+        printJalur(node->parent);
+        printf(" / ");
+    }
+    printf("%s %s", node->pageId.tab, node->title.tab);
+}
 
 bool PageTitle(AddressPage root, Kata targetId, Kata newTitle){
     if (newTitle.length < 1){
@@ -189,7 +200,7 @@ void Path(AddressPage root, Kata targetId){
         printf("Halaman %s tidak dapat ditemukan.\n", targetId.tab);
         return;
     }
-    printLokasi(target);
+    printJalur(target);
     printf("\n");
 }     
 
@@ -199,7 +210,11 @@ void PageStats(AddressPage root, Kata targetId){
         printf("Halaman %s tidak dapat ditemukan.\n", targetId.tab);
         return;
     }
-    printf("Halaman: %d\n", countPages(target));
+    int jumlahHalaman = countPages(target);
+    if (target == root){
+        jumlahHalaman--;
+    }
+    printf("Halaman: %d\n", jumlahHalaman);
     printf("Blok: %d\n", countBlocks(target));
     printf("Checklist: %d; selesai: %d\n", countChecklists(target), countChecklistsDone(target)); 
     printf("Kedalaman: %d\n", getDepth(target));
@@ -225,7 +240,7 @@ bool PageMove(AddressPage root, Kata targetId, Kata parentId){
         return false;
     }
     if (isSubtree(target, newParent)){
-        printf("Subtree dari halaman tidak boleh menjadi parent dari halaman tersebut.\n");
+        printf("Pemindahan gagal: %s berada di dalam subtree %s.\n", parentId.tab, targetId.tab);
         return false;
     }
 
@@ -244,10 +259,18 @@ bool PageMove(AddressPage root, Kata targetId, Kata parentId){
         }
     }
 
-    AddressPage temp = newParent->firstChild;
     target->parent = newParent;
-    newParent->firstChild = target;
-    target->nextSibling = temp;
+    if (newParent->firstChild == NULL || getPageId(target->pageId) < getPageId(newParent->firstChild->pageId)){
+        target->nextSibling = newParent->firstChild;
+        newParent->firstChild = target;
+    } else {
+        AddressPage cur = newParent->firstChild;
+        while (cur->nextSibling != NULL && getPageId(cur->nextSibling->pageId) < getPageId(target->pageId)){
+            cur = cur->nextSibling;
+        }
+        target->nextSibling = cur->nextSibling;
+        cur->nextSibling = target;
+    }
 
     printf("Halaman %s berhasil dipindahkan ke %s.\n", targetId.tab, parentId.tab);
     return true;

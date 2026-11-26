@@ -40,11 +40,16 @@ make run-driver DRIVER=drivers/driverskata.c  #contoh 1 driver saja
 | `driverskata.c` | ADT Kata dan util string |
 | `driversmesin.c` | Mesin karakter, mesin kata, dan pembaca field CSV |
 | `driversinput.c` | Pembacaan masukan interaktif |
-| `driversjurnal.c` | Counter ID dan flag perubahan jurnal |
+| `driversjurnal.c` | Struct Jurnal: counter ID, flag perubahan, dan pemuatan data |
 | `driversblock.c` | Blok teks dan checklist |
 | `driverspencarian.c` | Pencarian dan pengurutan halaman |
+| `driverstag.c` | ADT Tag: validasi nama, salin, dan perbandingan |
+| `driverslinkedlist.c` | List berkait halaman dan list berkait tag |
+| `driversmultilist.c` | Multilist halaman ke tag dan tag ke halaman |
+| `driversgraph.c` | Graph berarah untuk link dan backlink |
+| `driverstree.c` | Tree halaman |
  
-`driversinput` bersifat interaktif; jalankan dengan masukan dari pipe, misalnya:
+`make test` menjalankan setiap driver dengan masukan kosong sehingga `driversinput` tidak menunggu ketikan. Contoh input untuk mencoba `driversinput` secara manual:
  
 ```sh
 printf 'halo;\nP12;\nabc;\n42;\nx;\ny;\n' | ./bin/drivers/driversinput
@@ -82,17 +87,29 @@ Folder `build/` dan `bin/` dibuat otomatis saat kompilasi dan tidak masuk Git.
 
 | Kode | Fitur | Status |
 | ---- | ----- | ------ |
-| F00 | Rencana implementasi (ADT, driver, alasan di laporan) | Selesai |
-| F01 | Inisialisasi | Belum |
-| F02 | Manajemen halaman | Belum |
-| F03 | Hierarki halaman | Belum |
-| F04 | Pemindahan dan penghapusan halaman | Belum |
-| F05 | Blok teks dan checklist | Belum |
-| F06 | Link dan backlink | Belum |
-| F07 | Tag | Belum |
-| F08 | Pencarian dan pengurutan halaman | Belum |
-| F09 | Save dan Load | Belum |
+| F00 | Rencana implementasi | Selesai |
+| F01 | Inisialisasi | Selesai |
+| F02 | Manajemen halaman | Selesai |
+| F03 | Hierarki halaman | Selesai |
+| F04 | Pemindahan dan penghapusan halaman | Selesai |
+| F05 | Blok teks dan checklist | Selesai |
+| F06 | Link dan backlink | Selesai |
+| F07 | Tag | Selesai |
+| F08 | Pencarian dan pengurutan halaman | Selesai |
+| F09 | Save dan Load | Selesai |
 | F10 | Perintah umum (HELP, NEW, QUIT) | Selesai |
+
+## Status Bonus
+ 
+| Kode | Bonus | Status |
+| ---- | ----- | ------ |
+| B01 | Git Best Practice | Selesai |
+| B02 | Keyword Analysis | Tidak |
+| B03 | Advanced Search | Tidak |
+| B04 | Undo/Redo Perubahan Blok | Tidak |
+| B05 | Jalur Referensi Terpendek | Tidak |
+| B06 | Data Security | Tidak |
+| BXX | Kreativitas | Tidak |
 
 ## Sample Data
 

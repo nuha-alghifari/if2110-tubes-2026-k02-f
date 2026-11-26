@@ -31,7 +31,7 @@ run: $(TARGET)
 test:
 	@set -e; for d in $(DRIVER_SOURCES); do \
 		echo "=== $$d ==="; \
-		$(MAKE) --no-print-directory run-driver DRIVER="$$d"; \
+				$(MAKE) --no-print-directory run-driver DRIVER="$$d" < /dev/null; \
 	done
 
 DRIVER ?=
