@@ -149,16 +149,16 @@ void CMDPages(Jurnal *J) {
     ArahUrut arah;
     InfoHalaman *semua;
     int n, i;
-
-    if (Tanya("Urutkan berdasarkan (ID/TITLE):", &kataKriteria) != InputOK) return;
-    if (!KataKeKriteria(&kataKriteria, &kriteria)) {
-        printf("Pilihan harus ID atau TITLE.\n");
-        return;
-    }
-    if (Tanya("Urutan (ASC/DESC):", &kataArah) != InputOK) return;
-    if (!KataKeArah(&kataArah, &arah)) {
-        printf("Urutan harus ASC atau DESC.\n");
-        return;
+    {
+        static const char *const pilihanKriteria[] = {"ID", "TITLE"};
+        static const char *const pilihanArah[] = {"ASC", "DESC"};
+        int idx;
+        if (TanyaPilihan("Urutkan berdasarkan (ID/TITLE):", pilihanKriteria, 2, &idx) != InputOK) return;
+        KataDariC(&kataKriteria, pilihanKriteria[idx]);
+        KataKeKriteria(&kataKriteria, &kriteria);
+        if (TanyaPilihan("Urutan (ASC/DESC):", pilihanArah, 2, &idx) != InputOK) return;
+        KataDariC(&kataArah, pilihanArah[idx]);
+        KataKeArah(&kataArah, &arah);
     }
 
     n = KumpulkanHalaman(J, &semua);

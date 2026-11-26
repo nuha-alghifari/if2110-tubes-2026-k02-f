@@ -187,8 +187,14 @@ void CMDBlockAdd(Jurnal *J) {
         printf("Halaman P%d tidak ditemukan.\n", idHalaman);
         return;
     }
-    if (Tanya("Masukkan tipe blok (TEXT/CHECK):", &tipe) != InputOK) return;
-    if (Tanya("Masukkan posisi:", &posisi) != InputOK) return;
+    {
+        static const char *const pilihanTipe[] = {"TEXT", "CHECK"};
+        int idx, nilaiPosisi;
+        if (TanyaPilihan("Masukkan tipe blok (TEXT/CHECK):", pilihanTipe, 2, &idx) != InputOK) return;
+        KataDariC(&tipe, pilihanTipe[idx]);
+        if (TanyaInt("Masukkan posisi:", &nilaiPosisi) != InputOK) return;
+        posisi.length = sprintf(posisi.tab, "%d", nilaiPosisi);
+    }
     if (TanyaTidakKosong("Masukkan teks:", &teks) != InputOK) return;
 
     idBaru = J->nextBlockId;
@@ -223,7 +229,11 @@ void CMDBlockMove(Jurnal *J) {
     if (TanyaID("Masukkan ID blok:", 'B', &idBlok) != InputOK) return;
     list = AmbilListPemilik(J, idBlok, &idHalaman);
     if (list == NULL) return;
-    if (Tanya("Masukkan posisi baru:", &posisiBaru) != InputOK) return;
+    {
+        int nilaiPosisi;
+        if (TanyaInt("Masukkan posisi baru:", &nilaiPosisi) != InputOK) return;
+        posisiBaru.length = sprintf(posisiBaru.tab, "%d", nilaiPosisi);
+    }
 
     if (ProsesBlockMove(list, idHalaman, idBlok, &posisiBaru)) {
         TandaiUbah(J);
@@ -253,7 +263,12 @@ void CMDCheck(Jurnal *J) {
     if (TanyaID("Masukkan ID blok:", 'B', &idBlok) != InputOK) return;
     list = AmbilListPemilik(J, idBlok, &idHalaman);
     if (list == NULL) return;
-    if (Tanya("Masukkan status (TODO/DONE):", &status) != InputOK) return;
+    {
+        static const char *const pilihanStatus[] = {"TODO", "DONE"};
+        int idx;
+        if (TanyaPilihan("Masukkan status (TODO/DONE):", pilihanStatus, 2, &idx) != InputOK) return;
+        KataDariC(&status, pilihanStatus[idx]);
+    }
 
     if (ProsesCheck(list, idBlok, &status)) {
         TandaiUbah(J);
