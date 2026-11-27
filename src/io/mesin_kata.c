@@ -6,15 +6,12 @@ StatusBaca BacaMasukan(MesinKarakter *m, Kata *hasil){
     while (!m->eop && m->cc != ';'){
         char c = m->cc;
         if (c == '\n' || c == '\r' || c == '\t') c = ' ';
-    if (c == ' ' && hasil->length == 0){
-        Adv(m);
-        continue;
-    }
-    if (!TambahKata(hasil, c)){
-        if (c != ' ') kepanjangan = true;
-    }
+        if (c == ' ' && hasil->length == 0){
+            Adv(m);
+            continue;
+        }
         if (!TambahKata(hasil, c)){
-            kepanjangan = true;
+            if (c != ' ') kepanjangan = true;
         }
         Adv(m);
     }
