@@ -47,6 +47,7 @@ static const Perintah daftar[] = {
     {"UNLINK", "menghapus link antar halaman", CMDUnlink},
     {"LINKS", "menampilkan halaman yang dirujuk", CMDLinks},
     {"BACKLINKS", "menampilkan halaman yang merujuk", CMDBacklinks},
+    {"LINKPATH", "mencari jalur link terpendek antar halaman", CMDLinkPath},
 };
 
 #define JumlahPerintah ((int)(sizeof(daftar) / sizeof(daftar[0])))

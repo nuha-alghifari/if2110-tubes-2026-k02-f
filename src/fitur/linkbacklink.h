@@ -8,6 +8,7 @@ void CMDLink(Jurnal *j);
 void CMDUnlink(Jurnal *j);
 void CMDLinks(Jurnal *j);
 void CMDBacklinks(Jurnal *j);
+void CMDLinkPath(Jurnal *j);
 void LinkHapusHalaman(Jurnal *j, int idHalaman);
 
 #endif
