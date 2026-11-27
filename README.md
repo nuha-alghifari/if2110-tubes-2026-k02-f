@@ -107,7 +107,7 @@ Folder `build/` dan `bin/` dibuat otomatis saat kompilasi dan tidak masuk Git.
 | B02 | Keyword Analysis | Tidak |
 | B03 | Advanced Search | Tidak |
 | B04 | Undo/Redo Perubahan Blok | Tidak |
-| B05 | Jalur Referensi Terpendek | Tidak |
+| B05 | Jalur Referensi Terpendek | Selesai |
 | B06 | Data Security | Tidak |
 | BXX | Kreativitas | Tidak |
 
