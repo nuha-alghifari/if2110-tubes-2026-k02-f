@@ -3,7 +3,11 @@
 
 static bool TanyaHalamanLink(Jurnal *j, const char *pertanyaan, int *id) {
     if (TanyaID(pertanyaan, 'P', id) != InputOK) return false;
-    if (SearchVertexIdx(j->linkKeluar, *id) == INVALID_IDX) {
+    if (*id == 0) {
+        printf("P0 (Workspace) bukan halaman, tidak dapat dipakai pada link.\n");
+        return false;
+    }
+    if (CariHalamanJurnal(j, *id) == NULL || SearchVertexIdx(j->linkKeluar, *id) == INVALID_IDX) {
         printf("Halaman P%d tidak ditemukan.\n", *id);
         return false;
     }
@@ -74,10 +78,8 @@ void LinkHapusHalaman(Jurnal *j, int idHalaman) {
     int k;
     AddresslistPage p;
     if (i == INVALID_IDX) return;
-    // link keluar halaman ini: hapus dari backlink tujuan
     for (p = j->linkKeluar.node[i].Edge; p != NULL; p = p->next)
         deleteEdge(&j->linkMasuk, p->info, idHalaman);
-    // link masuk ke halaman ini: hapus dari link keluar sumber
     k = SearchVertexIdx(j->linkMasuk, idHalaman);
     if (k != INVALID_IDX)
         for (p = j->linkMasuk.node[k].Edge; p != NULL; p = p->next)

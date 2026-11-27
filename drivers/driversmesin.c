@@ -63,6 +63,7 @@ int main (void){
     StartString(&m, "PAGEADD\tP1\nJudul  baru;");
     cek(masukan(&m, BacaOK, "PAGEADD P1 Judul  baru"), "kata tab dan newline jadi spasi");
 
+    cek(Max_Kata == 1024, "batas field teks 1024 karakter");
     for (i = 0; i < Max_Kata; i++) panjang[i] = 'a';
     panjang[Max_Kata] = ';';
     panjang[Max_Kata + 1] = '\0';
@@ -70,6 +71,16 @@ int main (void){
     {
         Kata k;
         cek(BacaMasukan(&m, &k) == BacaOK && k.length == Max_Kata, "kata tepat batas diterima");
+    }
+    panjang[0] = '\n';
+    for (i = 1; i <= Max_Kata; i++) panjang[i] = 'a';
+    panjang[Max_Kata + 1] = ' ';
+    panjang[Max_Kata + 2] = ';';
+    panjang[Max_Kata + 3] = '\0';
+    StartString(&m, panjang);
+    {
+        Kata k;
+        cek(BacaMasukan(&m, &k) == BacaOK && k.length == Max_Kata, "kata tepat batas dengan spasi di tepi diterima");
     }
 
     for (i = 0; i < Max_Kata + 5; i++) panjang[i] = 'a';

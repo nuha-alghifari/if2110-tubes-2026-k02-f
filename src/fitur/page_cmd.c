@@ -14,6 +14,10 @@ void CMDPageAdd(Jurnal *J) {
     Kata judul;
 
     if (TanyaID("Masukkan ID parent:", 'P', &idParent) != InputOK) return;
+    if (CariHalamanJurnal(J, idParent) == NULL) {
+        printf("Halaman tidak dapat dibuat: parent P%d tidak ditemukan.\n", idParent);
+        return;
+    }
     if (TanyaTidakKosong("Masukkan judul halaman:", &judul) != InputOK) return;
 
     PageAdd(J, IdHalaman(idParent), judul);
@@ -26,6 +30,10 @@ void CMDPageTitle(Jurnal *J) {
     if (TanyaID("Masukkan ID halaman:", 'P', &id) != InputOK) return;
     if (id == 0) {
         printf("P0 (Workspace) tidak dapat diubah.\n");
+        return;
+    }
+    if (CariHalamanJurnal(J, id) == NULL) {
+        printf("Halaman P%d tidak dapat ditemukan.\n", id);
         return;
     }
     if (TanyaTidakKosong("Masukkan judul baru:", &judul) != InputOK) return;
@@ -68,6 +76,14 @@ void CMDPageMove(Jurnal *J) {
     int idParent;
 
     if (TanyaID("Masukkan ID halaman:", 'P', &id) != InputOK) return;
+    if (id == 0) {
+        printf("Root tidak bisa dipindah.\n");
+        return;
+    }
+    if (CariHalamanJurnal(J, id) == NULL) {
+        printf("Halaman P%d tidak dapat ditemukan.\n", id);
+        return;
+    }
     if (TanyaID("Masukkan ID parent baru:", 'P', &idParent) != InputOK) return;
 
     if (PageMove(J->root, IdHalaman(id), IdHalaman(idParent))) {

@@ -49,48 +49,71 @@ StatusInput Tanya (const char *pertanyaan, Kata *hasil){
 }
 
 StatusInput TanyaTidakKosong(const char *pertanyaan, Kata *hasil){
-    StatusInput s = Baca(pertanyaan, hasil);
-    if (s == InputOK && hasil->length == 0){
-        printf("Masukkan tidak boleh kosong\n");
-        return InputSalah;
+    while (true){
+        StatusInput s = Baca(pertanyaan, hasil);
+        if (s == InputEOF) return s;
+        if (s == InputOK && hasil->length > 0) return InputOK;
+        if (s == InputOK) printf("Masukkan tidak boleh kosong.\n");
     }
-    return s;
 }
 
 StatusInput TanyaID(const char *pertanyaan, char prefix, int *nomor){
-    Kata k;
-    StatusInput s = Baca(pertanyaan, &k);
-    if (s != InputOK) return s;
-    if (!KataKeID(&k, prefix, nomor)){
-        printf("ID tidak valid: gunakan format %c<angka>, contoh %c1.\n", prefix, prefix);
-        return InputSalah;
+    while (true){
+        Kata k;
+        StatusInput s = Baca(pertanyaan, &k);
+        if (s == InputEOF) return s;
+        if (s != InputOK) continue;
+        if (KataKeID(&k, prefix, nomor)) return InputOK;
+        printf("ID tidak valid: gunakan format %c<angka> dengan huruf besar, contoh %c1.\n", prefix, prefix);
     }
-    return InputOK;
 }
 
 StatusInput TanyaInt(const char *pertanyaan, int *nilai){
-    Kata k;
-    StatusInput s = Baca(pertanyaan, &k);
-    if (s != InputOK) return s;
-    if (!KataKeInt(&k, nilai)){
+    while (true){
+        Kata k;
+        StatusInput s = Baca(pertanyaan, &k);
+        if (s == InputEOF) return s;
+        if (s != InputOK) continue;
+        if (KataKeInt(&k, nilai)) return InputOK;
         printf("Masukan harus berupa bilangan bulat.\n");
-        return InputSalah;
     }
-    return InputOK;
 }
 
 StatusInput TanyaYN(const char *pertanyaan, bool *ya){
-    Kata k;
-    StatusInput s = Baca(pertanyaan, &k);
-    if (s != InputOK) return s;
-    if (k.length == 1 && (k.tab[0] == 'Y' || k.tab[0] == 'y')){
-        *ya = true;
-        return InputOK;
+    while (true){
+        Kata k;
+        StatusInput s = Baca(pertanyaan, &k);
+        if (s == InputEOF) return s;
+        if (s != InputOK) continue;
+        if (KataSamaC(&k, "Y")){
+            *ya = true;
+            return InputOK;
+        }
+        if (KataSamaC(&k, "N")){
+            *ya = false;
+            return InputOK;
+        }
+        printf("Jawaban harus Y atau N (huruf besar).\n");
     }
-    if (k.length == 1 && (k.tab[0] == 'N' || k.tab[0] == 'n')){
-        *ya = false;
-        return InputOK;
+}
+
+StatusInput TanyaPilihan(const char *pertanyaan, const char *const opsi[], int jumlah, int *idx){
+    while (true){
+        Kata k;
+        StatusInput s = Baca(pertanyaan, &k);
+        int i;
+        if (s == InputEOF) return s;
+        if (s != InputOK) continue;
+        for (i = 0; i < jumlah; i++){
+            if (KataSamaC(&k, opsi[i])){
+                *idx = i;
+                return InputOK;
+            }
+        }
+        printf("Pilihan harus ");
+        for (i = 0; i < jumlah; i++){
+            printf("%s%s", i > 0 ? " atau " : "", opsi[i]);
+        }
+        printf(" (huruf besar).\n");
     }
-    printf("Jawaban harus Y atau N.\n");
-    return InputSalah;
 }

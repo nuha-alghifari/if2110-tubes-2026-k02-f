@@ -56,7 +56,7 @@ static bool berjalan = true;
 static const Perintah *CariPerintah(const Kata *nama){
     int i;
     for (i = 0; i < JumlahPerintah; i++){
-        if (KataSamaCTanpaKapital(nama, daftar[i].nama)){
+        if (KataSamaC(nama, daftar[i].nama)){
             return &daftar[i];
         }
     }
