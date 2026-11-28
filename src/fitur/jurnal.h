@@ -5,6 +5,7 @@
 #include "multilistPage.h"
 #include "multilistTag.h"
 #include "GraphPage.h"
+#include "trie.h"
 #define Max_Pesan 256 // panjang maksimal pesan hasil jurnal
 
 typedef struct {
@@ -16,6 +17,8 @@ typedef struct {
     MultiListTag tagPages;
     Graph linkKeluar;
     Graph linkMasuk;
+    Trie trieHalaman;
+    Trie trieTag;
     bool perubahan; //true kalau ada perubahan yang belum diSave
 } Jurnal;
 

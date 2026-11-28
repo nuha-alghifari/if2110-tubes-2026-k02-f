@@ -177,3 +177,69 @@ void CMDPages(Jurnal *J) {
     }
     free(semua);
 }
+
+static void UrutkanIdNaik(int *ids, int n) {
+    int i, j, kunci;
+    for (i = 1; i < n; i++) {
+        kunci = ids[i];
+        j = i - 1;
+        while (j >= 0 && ids[j] > kunci) {
+            ids[j + 1] = ids[j];
+            j--;
+        }
+        ids[j + 1] = kunci;
+    }
+}
+
+void CMDSearchPage(Jurnal *J) {
+    Kata prefix;
+    int *ids;
+    int n, i;
+
+    if (TanyaTidakKosong("Masukkan prefix judul:", &prefix) != InputOK) return;
+
+    n = TrieCariPrefix(&J->trieHalaman, prefix.tab, &ids);
+    if (n < 0) {
+        printf("Memori tidak cukup.\n");
+        return;
+    }
+    if (n == 0) {
+        printf("Halaman tidak ditemukan.\n");
+        return;
+    }
+
+    UrutkanIdNaik(ids, n);
+    for (i = 0; i < n; i++) {
+        AddressPage h = CariHalamanJurnal(J, ids[i]);
+        if (h != NULL) {
+            printf("[P%d] %s\n", ids[i], h->title.tab);
+        }
+    }
+    free(ids);
+}
+
+void CMDSearchTag(Jurnal *J) {
+    Kata prefix;
+    int *ids;
+    int n, i;
+
+    if (TanyaTidakKosong("Masukkan prefix tag:", &prefix) != InputOK) return;
+
+    n = TrieCariPrefix(&J->trieTag, prefix.tab, &ids);
+    if (n < 0) {
+        printf("Memori tidak cukup.\n");
+        return;
+    }
+    if (n == 0) {
+        printf("Tag tidak ditemukan.\n");
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        AddressMultiListTag t = searchMLTagByID(J->tagPages, ids[i]);
+        if (t != NULL) {
+            printf("[T%d] %s\n", t->info.id, t->info.kata);
+        }
+    }
+    free(ids);
+}
