@@ -25,20 +25,25 @@ void CMDPageAdd(Jurnal *J) {
 
 void CMDPageTitle(Jurnal *J) {
     int id;
-    Kata judul;
+    Kata judul, judulLama;
+    AddressPage halaman;
 
     if (TanyaID("Masukkan ID halaman:", 'P', &id) != InputOK) return;
     if (id == 0) {
         printf("P0 (Workspace) tidak dapat diubah.\n");
         return;
     }
-    if (CariHalamanJurnal(J, id) == NULL) {
+    halaman = CariHalamanJurnal(J, id);
+    if (halaman == NULL) {
         printf("Halaman P%d tidak dapat ditemukan.\n", id);
         return;
     }
     if (TanyaTidakKosong("Masukkan judul baru:", &judul) != InputOK) return;
 
+    judulLama = halaman->title;
     if (PageTitle(J->root, IdHalaman(id), judul)) {
+        TrieHapus(&J->trieHalaman, judulLama.tab, id);
+        TrieTambah(&J->trieHalaman, judul.tab, id);
         TandaiUbah(J);
     }
 }

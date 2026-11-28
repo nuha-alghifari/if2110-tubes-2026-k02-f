@@ -52,6 +52,7 @@ void CMDTagAdd(Jurnal *J) {
     }
     t.id = AmbilIDTag(J);   // ID baru hanya dipakai kalau tag lolos validasi
     insertLastMLTag(&J->tagPages, t);
+    TrieTambah(&J->trieTag, t.kata, t.id);
     TandaiUbah(J);
     printf("Tag T%d berhasil dibuat.\n", t.id);
 }
@@ -106,6 +107,7 @@ void CMDTagDelete(Jurnal *J) {
         np = searchMLPageByID(J->pageTags, p->info);
         if (np != NULL) deleteAtTag(&np->child, nt->info);
     }
+    TrieHapus(&J->trieTag, nt->info.kata, nt->info.id);
     deleteAtMLTag(&J->tagPages, nt->info);   // sekaligus membebaskan daftar halamannya
     TandaiUbah(J);
     printf("Tag berhasil dihapus.\n");

@@ -35,6 +35,8 @@ static const Perintah daftar[] = {
     {"BLOCKDELETE", "menghapus blok", CMDBlockDelete},
     {"CHECK", "mengubah status checklist", CMDCheck},
     {"SEARCH", "mencari halaman", CMDSearch},
+    {"SEARCH_PAGE", "mencari halaman berdasarkan prefix judul", CMDSearchPage},
+    {"SEARCH_TAG", "mencari tag berdasarkan prefix nama", CMDSearchTag},
     {"PAGES", "menampilkan halaman terurut", CMDPages},
     {"TAGADD", "membuat tag baru", CMDTagAdd},
     {"TAGDELETE", "menghapus tag dari katalog", CMDTagDelete},

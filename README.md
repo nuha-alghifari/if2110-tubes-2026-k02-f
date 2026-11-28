@@ -48,6 +48,7 @@ make run-driver DRIVER=drivers/driverskata.c  #contoh 1 driver saja
 | `driversmultilist.c` | Multilist halaman ke tag dan tag ke halaman |
 | `driversgraph.c` | Graph berarah untuk link dan backlink |
 | `driverstree.c` | Tree halaman |
+| `driverstrie.c` | ADT Trie untuk pencarian prefix halaman dan tag |
  
 `make test` menjalankan setiap driver dengan masukan kosong sehingga `driversinput` tidak menunggu ketikan. Contoh input untuk mencoba `driversinput` secara manual:
  
@@ -105,7 +106,7 @@ Folder `build/` dan `bin/` dibuat otomatis saat kompilasi dan tidak masuk Git.
 | ---- | ----- | ------ |
 | B01 | Git Best Practice | Selesai |
 | B02 | Keyword Analysis | Tidak |
-| B03 | Advanced Search | Tidak |
+| B03 | Advanced Search | Selesai |
 | B04 | Undo/Redo Perubahan Blok | Tidak |
 | B05 | Jalur Referensi Terpendek | Selesai |
 | B06 | Data Security | Tidak |

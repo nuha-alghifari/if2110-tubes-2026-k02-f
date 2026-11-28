@@ -51,6 +51,8 @@ void InitJurnal(Jurnal *j){
     CreateMultiListTag(&j->tagPages);
     createGraph(&j->linkKeluar);
     createGraph(&j->linkMasuk);
+    InitTrie(&j->trieHalaman);
+    InitTrie(&j->trieTag);
 }
 
 void HapusJurnal(Jurnal *j){
@@ -60,6 +62,8 @@ void HapusJurnal(Jurnal *j){
     HapusMultiListTag(&j->tagPages);
     HapusGraph(&j->linkKeluar);
     HapusGraph(&j->linkMasuk);
+    HapusTrie(&j->trieHalaman);
+    HapusTrie(&j->trieTag);
 }
 
 void KosongkanJurnal(Jurnal *j){

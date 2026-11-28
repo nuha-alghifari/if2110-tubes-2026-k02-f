@@ -27,6 +27,7 @@ static void lepasRelasi(Jurnal *J, AddressPage node) {
         return;
     }
     int num = getPageId(node->pageId);
+    TrieHapus(&J->trieHalaman, node->title.tab, num);
     TagHapusHalaman(J, num);
     LinkHapusHalaman(J, num);
     lepasRelasi(J, node->firstChild);
@@ -92,6 +93,7 @@ bool PageAdd(Jurnal *J, Kata parentId, Kata title){
     TagTambahHalaman(J, num);
     insertVertex(&J->linkKeluar, num);
     insertVertex(&J->linkMasuk, num);
+    TrieTambah(&J->trieHalaman, title.tab, num);
     TandaiUbah(J);
 
     printf("Halaman %s berhasil dibuat.\n", newId.tab);

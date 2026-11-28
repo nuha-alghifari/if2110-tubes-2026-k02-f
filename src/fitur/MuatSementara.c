@@ -257,6 +257,7 @@ static bool MuatPages(Jurnal *j, Mem *mem, const char *folder, char *pesan, int 
         insertVertex(&j->linkKeluar, id);
         insertVertex(&j->linkMasuk, id);
         insertLastMLPage(&j->pageTags, id);
+        TrieTambah(&j->trieHalaman, mem->byId[id]->title.tab, id);
     }
     ok = true;
 
@@ -436,6 +437,7 @@ static bool MuatTag(Jurnal *j, Mem *mem, const char *folder, char *pesan, int pe
         for (i = 0; i < isi[1].length; i++) t.kata[i] = isi[1].tab[i];
         t.kata[t.length] = '\0';
         insertLastMLTag(&j->tagPages, t);
+        TrieTambah(&j->trieTag, t.kata, t.id);
         mem->jumlahTag++;
     }
     if (sb == BarisRusak){

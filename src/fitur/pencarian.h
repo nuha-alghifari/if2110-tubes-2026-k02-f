@@ -29,5 +29,7 @@ bool KataKeArah(const Kata *k, ArahUrut *arah);
 void CetakInfoHalaman(const InfoHalaman *h);                
 void CMDSearch(Jurnal *J);
 void CMDPages(Jurnal *J);
+void CMDSearchPage(Jurnal *J);
+void CMDSearchTag(Jurnal *J);
 
 #endif
