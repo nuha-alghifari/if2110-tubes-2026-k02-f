@@ -1,23 +1,19 @@
 #ifndef TAG_H
 #define TAG_H
-#define MAXTAGAMOUNT 100 //Masih sembarang
+#define MAXTAGAMOUNT 100 
 #include <stdbool.h>
 #include "kata.h"
 
 typedef struct tag
 {
-	char kata[1024];
+	char kata[Max_Kata + 1];
 	int length;
 	int id;
 } Tag;
 
-extern int idcounter;
-
 bool isTagValid(Tag t);
-Tag addNewTag();
 Tag copyKata(Kata k);
 bool isTagSama(Tag t1, Tag t2);
 bool isBeforeTag(Tag t1, Tag t2);
 
 #endif
-

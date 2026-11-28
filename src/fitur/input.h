@@ -15,6 +15,7 @@ StatusInput Tanya(const char *pertanyaan, Kata *hasil); // teks bebas, boleh kos
 StatusInput TanyaTidakKosong(const char *pertanyaan, Kata *hasil); // teks bebas, tidak boleh kosong
 StatusInput TanyaID(const char *pertanyaan, char prefix, int *nomor); // ID seperti P3, B2, T1, hasilnya angkanya saja
 StatusInput TanyaInt(const char *pertanyaan, int *nilai); // bilangan bulat, rentangnya dicek handler
-StatusInput TanyaYN(const char *pertanyaan, bool *ya); // konfirmasi Y atau N
+StatusInput TanyaYN(const char *pertanyaan, bool *ya); // konfirmasi Y atau N (huruf besar)
+StatusInput TanyaPilihan(const char *pertanyaan, const char *const opsi[], int jumlah, int *idx); // salah satu dari opsi, diulang sampai valid
 
 #endif

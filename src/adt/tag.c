@@ -1,37 +1,26 @@
 #include "stdio.h"
 #include "tag.h"
-#include "mesin_karakter.h"
+#include "../io/mesin_kata.h"
 #include <stdlib.h>
 
-int idcounter = 1;
 bool isTagValid(Tag t)
 {
-	bool valid;
-    int i=0;
-	while ((i<t.length) && (valid==true))
+	int i;
+	if (t.length <= 0) return false;
+	for (i = 0; i < t.length; i++)
 	{
-		valid=false;
-		for(char c = 'a'; c <= 'z' ; c++)
-		{
-			if (t.kata[i] == c)
-				valid = true;
-		}
-		for(char c= '1'; c <= '9' ; c++)
-		{
-			if (t.kata[i] == c)
-				valid = true;
-		}
-		if((t.kata[i]=='-') || (t.kata[i]=='_')) valid=true;
-        i++;
+		char c = t.kata[i];
+		bool ok = (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-' || c == '_';
+		if (!ok) return false;
 	}
-	return valid;
+	return true;
 }
+
 Tag createNewTag()
 {
 	Tag t;
 	t.length=0;
-	t.id=idcounter;
-	idcounter++;
+	t.id=0; 
 	return t;
 }
 
@@ -54,7 +43,7 @@ bool isTagSama(Tag t1, Tag t2)
         bool sama=true;
         for(int i=0;i<t1.length;i++)
         {
-            if(t1.kata[i]!=t2.kata[i]) 
+            if(t1.kata[i]!=t2.kata[i])
             {
                 sama=false;
                 break;
@@ -94,4 +83,3 @@ bool isBeforeTag(Tag t1, Tag t2)
 		else return false;
 	}
 }
-

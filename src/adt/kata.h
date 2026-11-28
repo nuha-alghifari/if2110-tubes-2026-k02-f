@@ -2,7 +2,7 @@
 #define KATA_H
 #include <stdbool.h>
 
-#define Max_Kata 1023 //panjang maksimal kata
+#define Max_Kata 1024 //panjang maksimal kata
 
 typedef struct {
     char tab[Max_Kata + 1]; //isi hurufnya

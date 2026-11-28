@@ -1,246 +1,151 @@
+#include <stdio.h>
 #include "tagfeat.h"
+#include "input.h"
+#include "tag.h"
 
-void initTag()
-{
-	CreateMultiListPage(&pagetag);
-	for (int i = 0; i < LENGTHPAGE; i++)
-		insertLastMLPage(&pagetag, 1);
-	CreateMultiListTag(&tagpage);
-}
-
-void tagAdd()
-{
-    Kata tagname;
-    StatusInput s=Tanya("Masukkan nama tag:",&tagname);
-    if(s==InputOK)
-    {
-        Tag t = copyKata(tagname);
-        if(isTagValid(t))
-        {
-            AddressMultiListTag p = searchMLTag(tagpage, t);
-            if (p!=NULL)
-                printf("Tag sudah ada :(");
-            else
-            {
-                insertLastMLTag(&tagpage, t);
-                printf("Tag T%d berhasil dibuat",idcounter-1);
-            }
-        }
-        else printf("Nama tag tidak valid!");
+static bool TanyaHalamanTag(Jurnal *J, AddressMultiListPage *out, int *idp) {
+    if (TanyaID("Masukkan ID halaman:", 'P', idp) != InputOK) return false;
+    *out = searchMLPageByID(J->pageTags, *idp);
+    if (*out == NULL) {
+        printf("Halaman P%d tidak ditemukan.\n", *idp);
+        return false;
     }
+    return true;
 }
 
-void tag()
-{
-    AddressMultiListPage p;
-    AddressMultiListTag t;
-    int idp,idt;
-    StatusInput s1=TanyaID("Masukkan ID halaman:",'P',&idp);
-    if((s1==InputOK))
-    {
-        p=searchMLPageByID(pagetag,idp);
-        if(p!=NULL)
-        {
-            StatusInput s2=TanyaID("Masukkan ID tag:",'T',&idt);
-            if(s2==InputOK)
-            {
-                t=searchMLTagByID(tagpage,idt);
-                if(t!=NULL)
-                {
-                    if(isAlreadyTagged(p,t))
-                    {
-                        printf("Already tagged :(");
-                    }
-                    else
-                    {
-                        insertLinkedListTag(&tagpage, t->info, p->info);
-                        insertLinkedListPage(&pagetag, p->info, t->info);
-                        printf("Tag berhasil dipasang.");
-                    }
-                }
-                else printf("Invalid tag :(");
-            }
-        }
-        else printf("Invalid page :(");
+static bool TanyaTagKatalog(Jurnal *J, AddressMultiListTag *out, int *idt) {
+    if (TanyaID("Masukkan ID tag:", 'T', idt) != InputOK) return false;
+    *out = searchMLTagByID(J->tagPages, *idt);
+    if (*out == NULL) {
+        printf("Tag T%d tidak ditemukan.\n", *idt);
+        return false;
     }
+    return true;
 }
 
-void untag()
-{
-	AddresslistPage p;
+void TagTambahHalaman(Jurnal *J, int idHalaman) {
+    if (searchMLPageByID(J->pageTags, idHalaman) == NULL)
+        insertLastMLPage(&J->pageTags, idHalaman);
+}
+
+void TagHapusHalaman(Jurnal *J, int idHalaman) {
+    AddressMultiListPage np = searchMLPageByID(J->pageTags, idHalaman);
     AddresslistTag t;
-    int idp,idt;
-    StatusInput s1=TanyaID("Masukkan ID halaman:",'P',&idp);
-    if((s1==InputOK))
-    {
-        p=searchMLPageByID(pagetag,idp);
-        if(p!=NULL)
-        {
-            StatusInput s2=TanyaID("Masukkan ID tag:",'T',&idt);
-            if(s2==InputOK)
-            {
-                t=searchMLTagByID(tagpage,idt);
-                if(t!=NULL)
-                {
-                    deleteLinkedListTag(&tagpage, t->info, p->info);
-	                deleteLinkedListPage(&pagetag, p->info, t->info);
-                    printf("Tag berhasil dilepas.");
-                }
-                else printf("Invalid tag :(");
-            }
-        }
-        else printf("Invalid page :(");
-    }
+    if (np == NULL) return;
+    for (t = np->child; t != NULL; t = t->next)
+        deleteLinkedListTag(&J->tagPages, t->info, idHalaman);
+    deleteAtMLPage(&J->pageTags, idHalaman);
 }
 
-void tagdelete()
-{
+void CMDTagAdd(Jurnal *J) {
+    Kata nama;
+    Tag t;
+    if (TanyaTidakKosong("Masukkan nama tag:", &nama) != InputOK) return;
+    t = copyKata(nama);
+    if (!isTagValid(t)) {
+        printf("Nama tag tidak valid. Gunakan huruf kecil, angka, _ atau -.\n");
+        return;
+    }
+    if (searchMLTag(J->tagPages, t) != NULL) {
+        printf("Tag \"%s\" sudah ada.\n", t.kata);
+        return;
+    }
+    t.id = AmbilIDTag(J);   // ID baru hanya dipakai kalau tag lolos validasi
+    insertLastMLTag(&J->tagPages, t);
+    TandaiUbah(J);
+    printf("Tag T%d berhasil dibuat.\n", t.id);
+}
+
+void CMDTag(Jurnal *J) {
+    AddressMultiListPage np;
+    AddressMultiListTag nt;
+    int idp, idt;
+    if (!TanyaHalamanTag(J, &np, &idp)) return;
+    if (!TanyaTagKatalog(J, &nt, &idt)) return;
+    if (searchTag(np->child, nt->info) != NULL) {
+        printf("Halaman P%d sudah memiliki tag T%d.\n", idp, idt);
+        return;
+    }
+    insertSortedTag(&np->child, nt->info);
+    insertSortedPage(&nt->child, idp);
+    TandaiUbah(J);
+    printf("Tag berhasil dipasang.\n");
+}
+
+void CMDUntag(Jurnal *J) {
+    AddressMultiListPage np;
+    AddressMultiListTag nt;
+    int idp, idt;
+    if (!TanyaHalamanTag(J, &np, &idp)) return;
+    if (!TanyaTagKatalog(J, &nt, &idt)) return;
+    if (searchTag(np->child, nt->info) == NULL) {
+        printf("Halaman P%d tidak memiliki tag T%d.\n", idp, idt);
+        return;
+    }
+    deleteAtTag(&np->child, nt->info);
+    deleteAtPage(&nt->child, idp);
+    TandaiUbah(J);
+    printf("Tag berhasil dilepas.\n");
+}
+
+void CMDTagDelete(Jurnal *J) {
+    AddressMultiListTag nt;
+    AddresslistPage p;
+    AddressMultiListPage np;
+    char pesan[1100];
+    bool ya;
     int idt;
-	StatusInput s1=TanyaID("Masukkan ID tag:",'T',&idt);
-    if(s1==InputOK)
-    {
-        AddressMultiListTag t=searchMLTagByID(tagpage,idt);
-        if(t!=NULL)
-        {
-            bool ya;
-            printf("Hapus tag %s dari katalog dan seluruh halaman? (Y/N)",t->info);
-            StatusInput s2=TanyaYN(NULL,&ya);
-            if(ya)
-            {
-                AddresslistPage tp=t->child;
-                while(tp!=NULL)
-                {
-                    deleteLinkedListPage(&pagetag, tp->info, t->info);
-                    tp=tp->next;
-                }
-                deleteAtMLTag(&tagpage, t->info);
-                printf("Tag berhasil dihapus.");
-            }
-        }
-        else printf("Invalid tag :(");
+    if (!TanyaTagKatalog(J, &nt, &idt)) return;
+    snprintf(pesan, sizeof(pesan), "Hapus tag %s dari katalog dan seluruh halaman? (Y/N)", nt->info.kata);
+    if (TanyaYN(pesan, &ya) != InputOK) return;
+    if (!ya) {
+        printf("Penghapusan tag dibatalkan.\n");
+        return;
     }
+    for (p = nt->child; p != NULL; p = p->next) {
+        np = searchMLPageByID(J->pageTags, p->info);
+        if (np != NULL) deleteAtTag(&np->child, nt->info);
+    }
+    deleteAtMLTag(&J->tagPages, nt->info);   // sekaligus membebaskan daftar halamannya
+    TandaiUbah(J);
+    printf("Tag berhasil dihapus.\n");
 }
 
-void taglist()
-{
-    AddressMultiListTag p= tagpage;
-    while(p!=NULL)
-    {
-        printf("[T%d] %s - %d halaman\n", p->info.id, p->info.kata, lengthListTag(p->child));
-        p=p->next;
+void CMDTagList(Jurnal *J) {
+    AddressMultiListTag p = J->tagPages;
+    if (p == NULL) {
+        printf("Belum ada tag.\n");
+        return;
     }
+    for (; p != NULL; p = p->next)
+        printf("[T%d] %s - %d halaman\n", p->info.id, p->info.kata, lengthListPage(p->child));
 }
 
-void pagetags()
-{
+void CMDPageTags(Jurnal *J) {
+    AddressMultiListPage np;
+    AddresslistTag t;
     int idp;
-	StatusInput s1=TanyaID("Masukkan ID page:",'P',&idp);
-    if(s1==InputOK)
-    {
-        AddressMultiListPage p=searchMLPageByID(pagetag,idp);
-        if(p!=NULL)
-        {
-            AddresslistTag t=p->child;
-            while(t!=NULL)
-            {
-                printf("[P%d] %s", t->info.id, t->info.kata);
-                t=t->next;
-            }
-            return;
-        }
-        else printf("Invalid page :(");
+    if (!TanyaHalamanTag(J, &np, &idp)) return;
+    if (np->child == NULL) {
+        printf("Halaman P%d belum memiliki tag.\n", idp);
+        return;
     }
+    for (t = np->child; t != NULL; t = t->next)   // terurut menurut nama
+        printf("[T%d] %s\n", t->info.id, t->info.kata);
 }
 
-void tagpages()
-{
+void CMDTagPages(Jurnal *J) {
+    AddressMultiListTag nt;
+    AddresslistPage p;
+    AddressPage h;
     int idt;
-	StatusInput s1=TanyaID("Masukkan ID tag:",'T',&idt);
-    if(s1==InputOK)
-    {
-        AddressMultiListPage t=searchMLTagByID(pagetag,idt);
-        if(t!=NULL)
-        {
-            AddresslistPage p=t->child;
-            while(p!=NULL)
-            {
-                printf("[T%d] %s", p->info, "test"); //Belum diimplementasi
-                p=p->next;
-            }
-            return;
-        }
-        else printf("Invalid tag :(");
+    if (!TanyaTagKatalog(J, &nt, &idt)) return;
+    if (nt->child == NULL) {
+        printf("Tag T%d belum dipakai halaman mana pun.\n", idt);
+        return;
+    }
+    for (p = nt->child; p != NULL; p = p->next) {   // terurut menurut ID
+        h = CariHalamanJurnal(J, p->info);
+        printf("[P%d] %s\n", p->info, h != NULL ? h->title.tab : "(tidak ditemukan)");
     }
 }
-
-bool isAlreadyTagged(AddressMultiListPage p, AddressMultiListTag mt)
-{
-    AddresslistTag t=searchTag(p->child,mt->info);
-    if(t!=NULL) return false;
-    else return true;
-}
-
-// bool isTagIdxValid(int id)
-// {
-//     AddressMultiListTag ada= searchMLTagByID(id);
-//     return ada!=NULL;
-// }
-// int idcounter
-
-// tag
-// int id
-
-// createnewtag
-
-// id=idcounter
-// idcounter++
-
-
-// bool isTaggingValid()
-// {
-// 	isPageValid();
-// 	isTagValid();
-// }
-
-
-	
-// bool isTagValid(char *t)
-// {
-//     int angka[10];
-// 	if(t[0]=='T')
-// 	{
-// 		if(isAngka(t))
-// 		{
-//             for (int i = 1 ; i < length(t); i++)
-//             {
-//                 angka[i - 1] = t[i];
-//             }
-//             angka[length(t)] = '\0';
-// 		}
-// 		int id=atol(angka);
-// 		if(id>0 && id<idcounter) return true;
-// 		else return false;
-// 	}
-// }
-
-// bool isAngka(char *t)
-// {
-// 	int i=1;
-//     bool valid=true;
-// 	while ((i<length(t)) && (valid==true))
-// 	{
-// 		valid=false;
-// 		for(char c='0';c<='9';c++)
-//         {
-// 			if(t[i]==c) valid=true;
-//         }
-// 	}
-// 	return valid;
-// }
-	
-// int length(char *c)
-// {
-// 	int i=0;
-// 	while(c[i]!='\0') i++;
-// 	return i;
-// }

@@ -21,11 +21,11 @@ void insertVertex(Graph *g, Page p)
     }
     else
     {
+        deleteAllPage(&g->node[0].Edge);
         for(int i=0;i<999;i++)
         {
             g->node[i]=g->node[i+1];
         }
-        deleteAllPage(&g->node[999].Edge);
         g->node[999]=newVertex(p);
     }
 }

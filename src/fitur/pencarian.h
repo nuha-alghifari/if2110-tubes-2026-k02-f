@@ -23,14 +23,10 @@ typedef enum {
 
 int KumpulkanHalaman(const Jurnal *J, InfoHalaman **daftar);
 int CariHalaman(const InfoHalaman *daftar, int n, const Kata *kunci, InfoHalaman *hasil);
-
-
 void UrutkanHalaman(InfoHalaman *daftar, int n, KriteriaUrut kriteria, ArahUrut arah);
-
 bool KataKeKriteria(const Kata *k, KriteriaUrut *kriteria);  
 bool KataKeArah(const Kata *k, ArahUrut *arah);             
 void CetakInfoHalaman(const InfoHalaman *h);                
-
 void CMDSearch(Jurnal *J);
 void CMDPages(Jurnal *J);
 

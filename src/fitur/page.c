@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include "jurnal.h"
 #include "tree.h"
 #include "page.h"
 #include "kata.h"
 #include "block_cmd.h"
-
-
-int idCounter = 0;
+#include "tagfeat.h"
+#include "linkbacklink.h"
+#include "multilistPage.h"
+#include "linkedlistTag.h"
+#include "tag.h"
 
 // ambil angka ID
 static int getPageId(Kata id) {
@@ -19,38 +22,36 @@ static int getPageId(Kata id) {
     return num;
 }
 
-// tulis ulang ID
-static void setPageId(AddressPage node, int num) {
-    char buf[16];
-    int len = sprintf(buf, "P%d", num);
-    node->pageId.length = len;
-    for (int i = 0; i <= len; i++) { 
-        node->pageId.tab[i] = buf[i];
-    }
-}
-
-static int countSmallerId(AddressPage delTree, int threshold) {
-    if (delTree == NULL) {
-        return 0;
-    }
-    int self = (getPageId(delTree->pageId) < threshold) ? 1 : 0;
-    return self + countSmallerId(delTree->firstChild, threshold) + countSmallerId(delTree->nextSibling, threshold);
-}
-
-static void changeForestId(AddressPage node, AddressPage deletedRoot) {
+static void lepasRelasi(Jurnal *J, AddressPage node) {
     if (node == NULL) {
         return;
     }
-    int oldNum = getPageId(node->pageId);
-    int change = countSmallerId(deletedRoot, oldNum);
-    if (change > 0) {
-        setPageId(node, oldNum - change);
-    }
-    changeForestId(node->firstChild, deletedRoot);
-    changeForestId(node->nextSibling, deletedRoot);
+    int num = getPageId(node->pageId);
+    TagHapusHalaman(J, num);
+    LinkHapusHalaman(J, num);
+    lepasRelasi(J, node->firstChild);
+    lepasRelasi(J, node->nextSibling);
 }
 
-bool PageAdd(AddressPage root, Kata parentId, Kata title){
+static void printPageTags(Jurnal *J, int pageNum){
+    AddressMultiListPage p = searchMLPageByID(J->pageTags, pageNum);
+    if (p == NULL || p->child == NULL){
+        printf("(kosong)");
+        return;
+    }
+
+    AddresslistTag t = p->child;
+    while (t != NULL){
+        printf("%s", t->info.kata);
+        if (t->next != NULL){
+            printf(", ");
+        }
+        t = t->next;
+    }
+}
+
+bool PageAdd(Jurnal *J, Kata parentId, Kata title){
+    AddressPage root = J->root;
     if (title.length < 1){
         printf("Judul halaman minimal 1 karakter.\n");
         return false;
@@ -64,7 +65,7 @@ bool PageAdd(AddressPage root, Kata parentId, Kata title){
 
     // buat array sementara untuk menampung id
     char buf[16];
-    int len = sprintf(buf, "P%d", idCounter + 1);
+    int len = sprintf(buf, "P%d", J->nextPageId);
 
     Kata newId;
     newId.length = len;
@@ -78,7 +79,7 @@ bool PageAdd(AddressPage root, Kata parentId, Kata title){
     if (newPage == NULL) {
         return false;
     }
-    idCounter++;
+    int num = AmbilIDHalaman(J);
 
     newPage->parent = parent;
     if (parent->firstChild == NULL){
@@ -88,6 +89,11 @@ bool PageAdd(AddressPage root, Kata parentId, Kata title){
         lastSibling->nextSibling = newPage;
     }
     
+    TagTambahHalaman(J, num);
+    insertVertex(&J->linkKeluar, num);
+    insertVertex(&J->linkMasuk, num);
+    TandaiUbah(J);
+
     printf("Halaman %s berhasil dibuat.\n", newId.tab);
     return true;
 
@@ -105,6 +111,17 @@ static void printLokasi(AddressPage node){
     printf("%s", node->title.tab);
 }
 
+
+static void printJalur(AddressPage node){
+    if (node == NULL){
+        return;
+    }
+    if (node->parent != NULL){
+        printJalur(node->parent);
+        printf(" / ");
+    }
+    printf("%s %s", node->pageId.tab, node->title.tab);
+}
 
 bool PageTitle(AddressPage root, Kata targetId, Kata newTitle){
     if (newTitle.length < 1){
@@ -132,7 +149,8 @@ static void printDaftarSubHalaman(AddressPage child){
     printDaftarSubHalaman(child->nextSibling);
 }
 
-void PageView(AddressPage root, Kata targetId){
+void PageView(Jurnal *J, Kata targetId){
+    AddressPage root = J->root;
     AddressPage target = findPage(root, targetId);
     if (target == NULL){
         printf("Halaman %s tidak dapat ditemukan.\n", targetId.tab);
@@ -149,7 +167,9 @@ void PageView(AddressPage root, Kata targetId){
     printLokasi(target);
     printf("\n");
 
-    printf("Tag: \n"); // menunggu implementasi tag
+    printf("Tag: "); 
+    printPageTags(J, getPageId(target->pageId));
+    printf("\n");
 
     printf("Blok: \n");
     CetakDaftarBlok(&target->blocks);
@@ -180,7 +200,7 @@ void Path(AddressPage root, Kata targetId){
         printf("Halaman %s tidak dapat ditemukan.\n", targetId.tab);
         return;
     }
-    printLokasi(target);
+    printJalur(target);
     printf("\n");
 }     
 
@@ -190,9 +210,13 @@ void PageStats(AddressPage root, Kata targetId){
         printf("Halaman %s tidak dapat ditemukan.\n", targetId.tab);
         return;
     }
-    printf("Halaman: %d\n", countPages(target));
+    int jumlahHalaman = countPages(target);
+    if (target == root){
+        jumlahHalaman--;
+    }
+    printf("Halaman: %d\n", jumlahHalaman);
     printf("Blok: %d\n", countBlocks(target));
-    printf("Checklist: (TBA)\n"); //TBA abis implementasi fiturnya don
+    printf("Checklist: %d; selesai: %d\n", countChecklists(target), countChecklistsDone(target)); 
     printf("Kedalaman: %d\n", getDepth(target));
 }
 
@@ -203,7 +227,7 @@ bool PageMove(AddressPage root, Kata targetId, Kata parentId){
         return false;
     }
     if (target == root || target->parent == NULL){
-        printf("Root tidak bisa dipindah.");
+        printf("Root tidak bisa dipindah.\n");
         return false;
     }
     AddressPage newParent = findPage(root, parentId);
@@ -212,11 +236,11 @@ bool PageMove(AddressPage root, Kata targetId, Kata parentId){
         return false;
     }
     if (target == newParent){
-        printf("Parent baru tidak boleh sama dengan halaman.");
+        printf("Parent baru tidak boleh sama dengan halaman.\n");
         return false;
     }
     if (isSubtree(target, newParent)){
-        printf("Subtree dari halaman tidak boleh menjadi parent dari halaman tersebut.");
+        printf("Pemindahan gagal: %s berada di dalam subtree %s.\n", parentId.tab, targetId.tab);
         return false;
     }
 
@@ -235,16 +259,25 @@ bool PageMove(AddressPage root, Kata targetId, Kata parentId){
         }
     }
 
-    AddressPage temp = newParent->firstChild;
     target->parent = newParent;
-    newParent->firstChild = target;
-    target->nextSibling = temp;
+    if (newParent->firstChild == NULL || getPageId(target->pageId) < getPageId(newParent->firstChild->pageId)){
+        target->nextSibling = newParent->firstChild;
+        newParent->firstChild = target;
+    } else {
+        AddressPage cur = newParent->firstChild;
+        while (cur->nextSibling != NULL && getPageId(cur->nextSibling->pageId) < getPageId(target->pageId)){
+            cur = cur->nextSibling;
+        }
+        target->nextSibling = cur->nextSibling;
+        cur->nextSibling = target;
+    }
 
     printf("Halaman %s berhasil dipindahkan ke %s.\n", targetId.tab, parentId.tab);
     return true;
 }
 
-bool PageDelete(AddressPage root, Kata targetId){
+bool PageDelete(Jurnal *J, Kata targetId){
+    AddressPage root = J->root;
     AddressPage target = findPage(root, targetId);
     if (target == NULL){
         printf("Halaman %s tidak dapat ditemukan.\n", targetId.tab);
@@ -252,7 +285,7 @@ bool PageDelete(AddressPage root, Kata targetId){
     }
 
     if (target == root){
-        printf("Root tidak boleh dihapus");
+        printf("Root tidak boleh dihapus.\n");
         return false;
     }
 
@@ -269,9 +302,9 @@ bool PageDelete(AddressPage root, Kata targetId){
 
     int deletedPages = countPages(target);
     int deletedBlocks = countBlocks(target);
-    changeForestId(root->firstChild, target);
-    idCounter -= deletedPages;
+    lepasRelasi(J, target);
     deleteSubtree(target);
+    TandaiUbah(J);
 
     printf("%d halaman dan %d blok berhasil dihapus.\n", deletedPages, deletedBlocks);
     return true;
@@ -280,16 +313,16 @@ bool PageDelete(AddressPage root, Kata targetId){
 
 
 
-void perintahPageAdd(AddressPage root, Kata parentId, Kata title){
-    PageAdd(root, parentId, title);
+void perintahPageAdd(Jurnal *J, Kata parentId, Kata title){
+    PageAdd(J, parentId, title);
 }
 
 void perintahPageTitle(AddressPage root, Kata targetId, Kata newTitle){
     PageTitle(root, targetId, newTitle);
 }
 
-void perintahPageView(AddressPage root, Kata targetId){
-    PageView(root, targetId);
+void perintahPageView(Jurnal *J, Kata targetId){
+    PageView(J, targetId);
 }
 
 void perintahTree(AddressPage root, Kata targetId){
@@ -308,8 +341,6 @@ void perintahPageMove(AddressPage root, Kata targetId, Kata parentId){
     PageMove(root, targetId, parentId);
 }
 
-void perintahPageDelete(AddressPage root, Kata targetId){
-    PageDelete(root, targetId);
+void perintahPageDelete(Jurnal *J, Kata targetId){
+    PageDelete(J, targetId);
 }
-     
-

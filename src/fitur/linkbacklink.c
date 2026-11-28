@@ -1,103 +1,156 @@
-#include "linkbacklink.h"
 #include <stdio.h>
+#include "linkbacklink.h"
+#include "queue.h"
 
-void initLink()
-{
-    createGraph(&LinkFromPages);
-    createGraph(&LinkToPages);
-    for(int i=0;i<10;i++)
-    {
-        insertVertex(&LinkFromPages,1); //Perlu diubah
-        insertVertex(&LinkToPages,1);  //Perlu diubah
+#define MAX_BFS 1000
+
+static bool TanyaHalamanLink(Jurnal *j, const char *pertanyaan, int *id) {
+    if (TanyaID(pertanyaan, 'P', id) != InputOK) return false;
+    if (*id == 0) {
+        printf("P0 (Workspace) bukan halaman, tidak dapat dipakai pada link.\n");
+        return false;
+    }
+    if (CariHalamanJurnal(j, *id) == NULL || SearchVertexIdx(j->linkKeluar, *id) == INVALID_IDX) {
+        printf("Halaman P%d tidak ditemukan.\n", *id);
+        return false;
+    }
+    return true;
+}
+
+static void CetakDaftarHalaman(Jurnal *j, AddresslistPage p, const char *kosong) {
+    if (p == NULL) {
+        printf("%s\n", kosong);
+        return;
+    }
+    for (; p != NULL; p = p->next) {   // sudah terurut menurut ID
+        AddressPage h = CariHalamanJurnal(j, p->info);
+        printf("[P%d] %s\n", p->info, h != NULL ? h->title.tab : "(tidak ditemukan)");
     }
 }
 
-void link()
-{
-    int idp1, idp2;
-    int i1,i2;
-    StatusInput s1=TanyaID("Masukkan ID halaman sumber:",'P', &idp1);
-    if(s1==InputOK)
-    {
-        i1=SearchVertexIdx(LinkToPages,idp1);
-        if(i1!=INVALID_IDX)
-        {
-            StatusInput s2=TanyaID("Masukkan ID halaman tujuan:",'P',idp2);
-            i2=SearchVertexIdx(LinkToPages,idp2);
-            if(i2!=INVALID_IDX)
-            {
-                addEdge(&LinkToPages, idp1, idp2);
-                addEdge(&LinkFromPages, idp2, idp1);
-                printf("Link berhasil ditambahkan.\n");
-            }
-            else printf("Invalid page :(\n");
-        }
-        else printf("Invalid page :(\n");
+void CMDLink(Jurnal *j) {
+    int a, b, ia;
+    if (!TanyaHalamanLink(j, "Masukkan ID halaman sumber:", &a)) return;
+    if (!TanyaHalamanLink(j, "Masukkan ID halaman tujuan:", &b)) return;
+    if (a == b) {
+        printf("Halaman tidak dapat menautkan dirinya sendiri.\n");
+        return;
     }
+    ia = SearchVertexIdx(j->linkKeluar, a);
+    if (searchPage(j->linkKeluar.node[ia].Edge, b) != NULL) {
+        printf("Link P%d -> P%d sudah ada.\n", a, b);
+        return;
+    }
+    addEdge(&j->linkKeluar, a, b);
+    addEdge(&j->linkMasuk, b, a);
+    TandaiUbah(j);
+    printf("Link berhasil ditambahkan.\n");
 }
 
-void unlink()
-{
-    int idp1, idp2;
-    int i1,i2;
-    StatusInput s1=TanyaID("Masukkan ID halaman sumber:",'P',idp1);
-    if(s1==InputOK)
-    {
-        i1=SearchVertexIdx(LinkToPages,idp1);
-        if(i1!=INVALID_IDX)
-        {
-            StatusInput s2=TanyaID("Masukkan ID halaman tujuan:",'P',idp2);
-            i2=SearchVertexIdx(LinkToPages,idp2);
-            if(i2!=INVALID_IDX)
-            {
-                deleteEdge(&LinkToPages, idp1, idp2);
-                deleteEdge(&LinkFromPages, idp2, idp1);
-                printf("Link berhasil dihapus.\n");
-            }
-            else printf("Invalid page :(\n");
-        }
-        else printf("Invalid page :(\n");
+void CMDUnlink(Jurnal *j) {
+    int a, b, ia;
+    if (!TanyaHalamanLink(j, "Masukkan ID halaman sumber:", &a)) return;
+    if (!TanyaHalamanLink(j, "Masukkan ID halaman tujuan:", &b)) return;
+    ia = SearchVertexIdx(j->linkKeluar, a);
+    if (searchPage(j->linkKeluar.node[ia].Edge, b) == NULL) {
+        printf("Link P%d -> P%d tidak ditemukan.\n", a, b);
+        return;
     }
+    deleteEdge(&j->linkKeluar, a, b);
+    deleteEdge(&j->linkMasuk, b, a);
+    TandaiUbah(j);
+    printf("Link berhasil dihapus.\n");
 }
 
-void links()
-{
-    int idp;
-    int i;
-    StatusInput s=TanyaID("Masukkan ID halaman:",'P',idp);
-    if(s==InputOK)
-    {
-        i=SearchVertexIdx(LinkToPages,idp);
-        if(i!=INVALID_IDX)
-        {
-            AddresslistPage p=LinkToPages.node[i].Edge;
-            while(p!=NULL)
-            {
-                printf("[P%d] %s\n",p->info,"test"); //Perlu diganti
-                p=p->next;
-            }
-        }
-        else printf("Invalid page :(\n");
-    }
+void CMDLinks(Jurnal *j) {
+    int id, i;
+    if (!TanyaHalamanLink(j, "Masukkan ID halaman:", &id)) return;
+    i = SearchVertexIdx(j->linkKeluar, id);
+    CetakDaftarHalaman(j, j->linkKeluar.node[i].Edge, "Belum ada halaman yang dirujuk.");
 }
 
-void backlinks()
-{
-    int idp;
-    int i;
-    StatusInput s=TanyaID("Masukkan ID halaman:",'P',idp);
-    if(s==InputOK)
-    {
-        i=SearchVertexIdx(LinkToPages,idp);
-        if(i!=INVALID_IDX)
-        {
-            AddresslistPage p=LinkFromPages.node[i].Edge;
-            while(p!=NULL)
-            {
-                printf("[P%d] %s\n",p->info,"test"); //Perlu diganti
-                p=p->next;
+void CMDBacklinks(Jurnal *j) {
+    int id, i;
+    if (!TanyaHalamanLink(j, "Masukkan ID halaman:", &id)) return;
+    i = SearchVertexIdx(j->linkMasuk, id);
+    CetakDaftarHalaman(j, j->linkMasuk.node[i].Edge, "Belum ada halaman yang merujuk.");
+}
+
+void LinkHapusHalaman(Jurnal *j, int idHalaman) {
+    int i = SearchVertexIdx(j->linkKeluar, idHalaman);
+    int k;
+    AddresslistPage p;
+    if (i == INVALID_IDX) return;
+    for (p = j->linkKeluar.node[i].Edge; p != NULL; p = p->next)
+        deleteEdge(&j->linkMasuk, p->info, idHalaman);
+    k = SearchVertexIdx(j->linkMasuk, idHalaman);
+    if (k != INVALID_IDX)
+        for (p = j->linkMasuk.node[k].Edge; p != NULL; p = p->next)
+            deleteEdge(&j->linkKeluar, p->info, idHalaman);
+    deleteAllPage(&j->linkKeluar.node[i].Edge);
+    if (k != INVALID_IDX) deleteAllPage(&j->linkMasuk.node[k].Edge);
+}
+
+void CMDLinkPath(Jurnal *j) {
+    int sumber, tujuan;
+    int iSumber, iTujuan, i;
+    int parent[MAX_BFS];
+    bool dikunjungi[MAX_BFS];
+    Queue q;
+    int cur;
+    bool ketemu;
+
+    if (!TanyaHalamanLink(j, "Masukkan ID halaman sumber:", &sumber)) return;
+    if (!TanyaHalamanLink(j, "Masukkan ID halaman tujuan:", &tujuan)) return;
+
+    iSumber = SearchVertexIdx(j->linkKeluar, sumber);
+    iTujuan = SearchVertexIdx(j->linkKeluar, tujuan);
+
+    for (i = 0; i < MAX_BFS; i++) {
+        dikunjungi[i] = false;
+        parent[i] = INVALID_IDX;
+    }
+
+    CreateQueue(&q);
+    dikunjungi[iSumber] = true;
+    Enqueue(&q, iSumber);
+    ketemu = (iSumber == iTujuan);
+
+    while (!ketemu && Dequeue(&q, &cur)) {
+        AddresslistPage p;
+        for (p = j->linkKeluar.node[cur].Edge; p != NULL && !ketemu; p = p->next) {
+            int n = SearchVertexIdx(j->linkKeluar, p->info);
+            if (n == INVALID_IDX || dikunjungi[n]) continue;
+            dikunjungi[n] = true;
+            parent[n] = cur;
+            if (n == iTujuan) {
+                ketemu = true;
+            } else {
+                Enqueue(&q, n);
             }
         }
-        else printf("Invalid page :(\n");
+    }
+    DeleteAllQueue(&q);
+
+    if (!ketemu) {
+        printf("Tidak ada jalur dari P%d ke P%d.\n", sumber, tujuan);
+        return;
+    }
+
+    {
+        int jalur[MAX_BFS];
+        int panjang = 0;
+        int k;
+        for (cur = iTujuan; cur != INVALID_IDX; cur = parent[cur]) {
+            jalur[panjang++] = cur;
+        }
+        for (k = panjang - 1; k >= 0; k--) {
+            int id = j->linkKeluar.node[jalur[k]].info;
+            AddressPage h = CariHalamanJurnal(j, id);
+            printf("P%d %s", id, h != NULL ? h->title.tab : "(tidak ditemukan)");
+            if (k > 0) printf(" -> ");
+        }
+        printf("\n");
+        printf("Panjang: %d link\n", panjang - 1);
     }
 }
